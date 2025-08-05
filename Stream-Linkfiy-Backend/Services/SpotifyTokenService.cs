@@ -36,7 +36,7 @@ namespace Stream_Linkfiy_Backend.Services
             catch (Exception ex)
             {
                 logger.LogError(ex, "Exception occurred while getting Spotify access token");
-                return null;
+                throw new Exception($"error occured while getting spotify token: {ex.Message}");
             }
             finally
             {
@@ -57,10 +57,10 @@ namespace Stream_Linkfiy_Backend.Services
                 Convert.ToBase64String(Encoding.UTF8.GetBytes($"{clientId}:{clientSecret}"))
                 );
 
-            req.Content = new FormUrlEncodedContent(new[]
-            {
+            req.Content = new FormUrlEncodedContent(
+            [
                 new KeyValuePair<string, string>("grant_type", "client_credentials")
-            });
+            ]);
 
             var resp = await client.SendAsync(req);
             resp.EnsureSuccessStatusCode();

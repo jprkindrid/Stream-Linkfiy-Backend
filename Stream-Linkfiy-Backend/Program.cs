@@ -1,5 +1,6 @@
 using Scalar.AspNetCore;
 using Stream_Linkfiy_Backend.Interfaces;
+using Stream_Linkfiy_Backend.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,8 +18,10 @@ builder.Services.AddControllers()
     });
 
 // built services
-builder.Services.AddScoped<ISpotifyTokenService, ISpotifyTokenService>();
-builder.Services.AddHttpClient<ISpotifyTokenService, ISpotifyTokenService>();
+builder.Services.AddScoped<ISpotifyTokenService, SpotifyTokenService>();
+builder.Services.AddHttpClient<ISpotifyTokenService, SpotifyTokenService>();
+builder.Services.AddScoped<ISpotifyTrackService, SpotifyTrackService>();
+builder.Services.AddHttpClient<ISpotifyTrackService, SpotifyTrackService>();
 
 var app = builder.Build();
 
