@@ -1,12 +1,14 @@
 using Scalar.AspNetCore;
 using Stream_Linkfiy_Backend.Interfaces;
 using Stream_Linkfiy_Backend.Services;
+using Stream_Linkfiy_Backend.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Logging.AddConsole();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 
 builder.Services.AddOpenApi();
@@ -17,11 +19,8 @@ builder.Services.AddControllers()
         options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
     });
 
-// built services
-builder.Services.AddScoped<ISpotifyTokenService, SpotifyTokenService>();
-builder.Services.AddHttpClient<ISpotifyTokenService, SpotifyTokenService>();
-builder.Services.AddScoped<ISpotifyTrackService, SpotifyTrackService>();
-builder.Services.AddHttpClient<ISpotifyTrackService, SpotifyTrackService>();
+// created services
+builder.Services.AddSpotifyServices();
 
 var app = builder.Build();
 
@@ -34,12 +33,12 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-//app.UseCors(x => x
-//.AllowAnyMethod()
-//.AllowAnyHeader()
-//.AllowCredentials()
-////.WithOrigins("http://localhost:44351")
-//.SetIsOriginAllowed(origin => true));
+app.UseCors(x => x
+.AllowAnyMethod()
+.AllowAnyHeader()
+.AllowCredentials()
+//.WithOrigins("http://localhost:44351")
+.SetIsOriginAllowed(origin => true));
 
 app.UseAuthorization();
 

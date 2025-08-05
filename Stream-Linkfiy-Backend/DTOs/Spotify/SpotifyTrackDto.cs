@@ -5,7 +5,7 @@ namespace Stream_Linkfiy_Backend.DTOs.Spotify
     public record SpotifyTrackDto
     {
         [JsonPropertyName("album")]
-        public required SpotifyAlbumDto Album { get; init; }
+        public required SpotifyTrackAlbumDto Album { get; init; }
 
         [JsonPropertyName("artists")]
         public required List<SpotifyArtistDto> Artists { get; init; }

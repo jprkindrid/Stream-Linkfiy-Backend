@@ -59,5 +59,29 @@ namespace Stream_Linkify_Backend.Tests
             Assert.NotNull(track);
             Assert.False(string.IsNullOrWhiteSpace(track!.Name));
         }
+        [Fact]
+        public async Task GetValidAlbumAsync_ReturnsAlbum()
+        {
+            var services = new ServiceCollection();
+            services.AddLogging(b => b.AddConsole());
+            services.AddHttpClient();
+
+            var config = new ConfigurationBuilder()
+                .AddUserSecrets<SpotifyTokenService_SmokeTests>(optional: true).AddEnvironmentVariables().Build();
+
+            services.AddSingleton<IConfiguration>(config);
+            services.AddSingleton<ISpotifyTokenService, SpotifyTokenService>();
+            services.AddSingleton<ISpotifyAlbumService, SpotifyAlbumService>();
+
+            var servicesProvider = services.BuildServiceProvider();
+            var svc = servicesProvider.GetRequiredService<ISpotifyAlbumService>();
+
+            var exampleTrack = "https://open.spotify.com/album/27teXombBxDGNa9f5jtOr2?si=R6dKhp2MSc-jKFirPkZzLA";
+
+            var album = await svc.GetAlbumAsync(exampleTrack);
+
+            Assert.NotNull(album);
+            Assert.False(string.IsNullOrWhiteSpace(album!.Name));
+        }
     }
 }

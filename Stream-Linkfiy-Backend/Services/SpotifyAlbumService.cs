@@ -4,21 +4,21 @@ using System.Runtime.Intrinsics.X86;
 
 namespace Stream_Linkfiy_Backend.Services
 {
-    public class SpotifyTrackService : ISpotifyTrackService
+    public class SpotifyAlbumService : ISpotifyAlbumService
     {
-        private const string spotifyApiTrackUrl = "https://api.spotify.com/v1/tracks";
+        private const string spotifyApiAlbumUrl = "https://api.spotify.com/v1/albums";
         private readonly SemaphoreSlim sem = new(1, 1);
         private readonly IHttpClientFactory httpClientFactory;
         private readonly ILogger<SpotifyTrackService> logger;
         private readonly ISpotifyTokenService spotifyTokenService;
 
-        public SpotifyTrackService(IHttpClientFactory httpClientFactory, ILogger<SpotifyTrackService> logger, ISpotifyTokenService spotifyTokenService)
+        public SpotifyAlbumService(IHttpClientFactory httpClientFactory, ILogger<SpotifyTrackService> logger, ISpotifyTokenService spotifyTokenService)
         {
             this.httpClientFactory = httpClientFactory;
             this.logger = logger;
             this.spotifyTokenService = spotifyTokenService;
         }
-        public async Task<SpotifyTrackDto?> GetTrackAsync(string spotifyUrl)
+        public async Task<SpotifyAlbumDto> GetAlbumAsync(string spotifyUrl)
         {
             await sem.WaitAsync();
             try
@@ -26,8 +26,8 @@ namespace Stream_Linkfiy_Backend.Services
                 var aToken = await spotifyTokenService.GetValidTokenAsync()
                     ?? throw new InvalidOperationException("Error getting spotify access token");
 
-                var trackID = ExtractTrackId(spotifyUrl);
-                var reqUrl = $"{spotifyApiTrackUrl}/{trackID}";
+                var albumID = ExtractAlbumId(spotifyUrl);
+                var reqUrl = $"{spotifyApiAlbumUrl}/{albumID}";
 
                 var req = new HttpRequestMessage(HttpMethod.Get, reqUrl);
                 req.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(
@@ -39,15 +39,15 @@ namespace Stream_Linkfiy_Backend.Services
                 var resp = await client.SendAsync(req);
                 resp.EnsureSuccessStatusCode();
 
-                SpotifyTrackDto track = await resp.Content.ReadFromJsonAsync<SpotifyTrackDto>()
-                    ?? throw new Exception("Error deseralizing spotify track response");
+                SpotifyAlbumDto album = await resp.Content.ReadFromJsonAsync<SpotifyAlbumDto>()
+                    ?? throw new Exception("Error deseralizing spotify album response");
 
-                return track;
+                return album;
             } 
             catch (Exception ex)
             {
-                logger.LogError(ex, "error getting spotify track");
-                return null;
+                logger.LogError(ex, "error getting spotify album");
+                throw new Exception("Error getting spotify album", ex);
             }
             finally
             {
@@ -56,7 +56,7 @@ namespace Stream_Linkfiy_Backend.Services
 
         }
 
-        public string ExtractTrackId(string spotifyUrl)
+        public string ExtractAlbumId(string spotifyUrl)
         {
             if (!Uri.TryCreate(spotifyUrl, UriKind.Absolute, out var uri))
                 throw new ArgumentException("Invalid URL format");
@@ -64,7 +64,7 @@ namespace Stream_Linkfiy_Backend.Services
             if (uri.Host == "open.spotify.com")
             {
                 var pathParts = uri.AbsolutePath.Split('/', StringSplitOptions.RemoveEmptyEntries);
-                if (pathParts.Length >= 2 && pathParts[0] == "track")
+                if (pathParts.Length >= 2 && pathParts[0] == "album")
                 {
                     return pathParts[1];
                 }
@@ -74,7 +74,7 @@ namespace Stream_Linkfiy_Backend.Services
                 // if they enter a URI for some reason
             {
                 var parts = uri.AbsolutePath.Split(":");
-                if (parts.Length == 3 && parts[1] == "track")
+                if (parts.Length == 3 && parts[1] == "album")
                 {
                     return parts[2];
                 }
