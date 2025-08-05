@@ -1,0 +1,8 @@
+@Stream_Linkfiy_Backend_HostAddress = https://localhost:7026
+// Docker port https://localhost:7026
+// Normal Port http://localhost:5049
+
+GET {{Stream_Linkfiy_Backend_HostAddress}}
+Accept: application/json
+
+###
