@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36310.24 d17.14
+VisualStudioVersion = 17.14.36310.24
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stream-Linkfiy-Backend", "Stream-Linkfiy-Backend\Stream-Linkfiy-Backend.csproj", "{B37A3595-67A6-49F1-A403-D4F58C210565}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stream-Linkify-Backend.Tests", "Stream-Linkify-Backend.Tests\Stream-Linkify-Backend.Tests.csproj", "{654F529D-F433-4C20-9CFA-0DA071397CEF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{B37A3595-67A6-49F1-A403-D4F58C210565}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B37A3595-67A6-49F1-A403-D4F58C210565}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B37A3595-67A6-49F1-A403-D4F58C210565}.Release|Any CPU.Build.0 = Release|Any CPU
+		{654F529D-F433-4C20-9CFA-0DA071397CEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{654F529D-F433-4C20-9CFA-0DA071397CEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{654F529D-F433-4C20-9CFA-0DA071397CEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{654F529D-F433-4C20-9CFA-0DA071397CEF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

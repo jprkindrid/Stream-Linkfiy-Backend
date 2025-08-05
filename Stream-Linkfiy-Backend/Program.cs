@@ -1,4 +1,5 @@
 using Scalar.AspNetCore;
+using Stream_Linkfiy_Backend.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +16,9 @@ builder.Services.AddControllers()
         options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
     });
 
-
+// built services
+builder.Services.AddScoped<ISpotifyTokenService, ISpotifyTokenService>();
+builder.Services.AddHttpClient<ISpotifyTokenService, ISpotifyTokenService>();
 
 var app = builder.Build();
 
