@@ -4,7 +4,6 @@ namespace Stream_Linkfiy_Backend.Interfaces
 {
     public interface ISpotifyAlbumService
     {
-        Task<SpotifyAlbumDto> GetAlbumAsync(string url);
-        string ExtractAlbumId(string spotifyUrl);
+        Task<SpotifyAlbumFullDto> GetByUrlAsync(string url);
     }
 }

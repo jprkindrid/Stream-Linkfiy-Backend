@@ -4,7 +4,7 @@ namespace Stream_Linkfiy_Backend.Interfaces
 {
     public interface ISpotifyTrackService
     {
-        Task<SpotifyTrackDto?> GetTrackAsync(string url);
-        string ExtractTrackId(string spotifyUrl);
+        Task<SpotifyTrackFullDto?> GetByUrlAsync(string url);
+        Task<SpotifySearchResponseDto?> GetByIsrcAsync(string isrc);
     }
 }

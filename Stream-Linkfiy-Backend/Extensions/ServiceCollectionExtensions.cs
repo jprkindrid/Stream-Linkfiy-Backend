@@ -7,12 +7,12 @@ namespace Stream_Linkfiy_Backend.Extensions
     {
         public static IServiceCollection AddSpotifyServices(this IServiceCollection services)
         {
-            services.AddScoped<ISpotifyTokenService, SpotifyTokenService>();
-            services.AddHttpClient<ISpotifyTokenService, SpotifyTokenService>();
+            services.AddHttpClient();
+
+            services.AddSingleton<ISpotifyTokenService, SpotifyTokenService>();
             services.AddScoped<ISpotifyTrackService, SpotifyTrackService>();
-            services.AddHttpClient<ISpotifyTrackService, SpotifyTrackService>();
             services.AddScoped<ISpotifyAlbumService, SpotifyAlbumService>();
-            services.AddHttpClient<ISpotifyAlbumService, SpotifyAlbumService>();
+
             return services;
         }
     }

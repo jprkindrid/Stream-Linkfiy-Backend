@@ -50,11 +50,11 @@ namespace Stream_Linkify_Backend.Tests
             services.AddSingleton<ISpotifyTrackService, SpotifyTrackService>();
 
             var servicesProvider = services.BuildServiceProvider();
-            var svc = servicesProvider.GetRequiredService<ISpotifyTrackService>();
+            var trackService = servicesProvider.GetRequiredService<ISpotifyTrackService>();
 
             var exampleTrack = "https://open.spotify.com/track/43eLl2gwEr0fgbFgS11uOh?si=220d34b2d78b4ca7";
 
-            var track = await svc.GetTrackAsync(exampleTrack);
+            var track = await trackService.GetByUrlAsync(exampleTrack);
 
             Assert.NotNull(track);
             Assert.False(string.IsNullOrWhiteSpace(track!.Name));
@@ -74,11 +74,11 @@ namespace Stream_Linkify_Backend.Tests
             services.AddSingleton<ISpotifyAlbumService, SpotifyAlbumService>();
 
             var servicesProvider = services.BuildServiceProvider();
-            var svc = servicesProvider.GetRequiredService<ISpotifyAlbumService>();
+            var albumService = servicesProvider.GetRequiredService<ISpotifyAlbumService>();
 
             var exampleTrack = "https://open.spotify.com/album/27teXombBxDGNa9f5jtOr2?si=R6dKhp2MSc-jKFirPkZzLA";
 
-            var album = await svc.GetAlbumAsync(exampleTrack);
+            var album = await albumService.GetByUrlAsync(exampleTrack);
 
             Assert.NotNull(album);
             Assert.False(string.IsNullOrWhiteSpace(album!.Name));

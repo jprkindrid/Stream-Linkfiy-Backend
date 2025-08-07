@@ -1,13 +1,12 @@
 ﻿using Stream_Linkfiy_Backend.DTOs.Spotify;
 using Stream_Linkfiy_Backend.Interfaces;
-using System.Runtime.Intrinsics.X86;
+using Stream_Linkfiy_Backend.Helpers;
 
 namespace Stream_Linkfiy_Backend.Services
 {
     public class SpotifyAlbumService : ISpotifyAlbumService
     {
         private const string spotifyApiAlbumUrl = "https://api.spotify.com/v1/albums";
-        private readonly SemaphoreSlim sem = new(1, 1);
         private readonly IHttpClientFactory httpClientFactory;
         private readonly ILogger<SpotifyTrackService> logger;
         private readonly ISpotifyTokenService spotifyTokenService;
@@ -18,15 +17,15 @@ namespace Stream_Linkfiy_Backend.Services
             this.logger = logger;
             this.spotifyTokenService = spotifyTokenService;
         }
-        public async Task<SpotifyAlbumDto> GetAlbumAsync(string spotifyUrl)
+        public async Task<SpotifyAlbumFullDto> GetByUrlAsync(string spotifyUrl)
         {
-            await sem.WaitAsync();
+            await SpotifyConcurrency.GlobalSemaphore.WaitAsync();
             try
             {
                 var aToken = await spotifyTokenService.GetValidTokenAsync()
                     ?? throw new InvalidOperationException("Error getting spotify access token");
 
-                var albumID = ExtractAlbumId(spotifyUrl);
+                var albumID = SpotifyUrlHelper.ExtractSpotifyId(spotifyUrl, "album");
                 var reqUrl = $"{spotifyApiAlbumUrl}/{albumID}";
 
                 var req = new HttpRequestMessage(HttpMethod.Get, reqUrl);
@@ -39,7 +38,7 @@ namespace Stream_Linkfiy_Backend.Services
                 var resp = await client.SendAsync(req);
                 resp.EnsureSuccessStatusCode();
 
-                SpotifyAlbumDto album = await resp.Content.ReadFromJsonAsync<SpotifyAlbumDto>()
+                SpotifyAlbumFullDto album = await resp.Content.ReadFromJsonAsync < SpotifyAlbumFullDto>()
                     ?? throw new Exception("Error deseralizing spotify album response");
 
                 return album;
@@ -51,36 +50,10 @@ namespace Stream_Linkfiy_Backend.Services
             }
             finally
             {
-                sem.Release();
+                SpotifyConcurrency.GlobalSemaphore.Release();
             }
 
         }
 
-        public string ExtractAlbumId(string spotifyUrl)
-        {
-            if (!Uri.TryCreate(spotifyUrl, UriKind.Absolute, out var uri))
-                throw new ArgumentException("Invalid URL format");
-
-            if (uri.Host == "open.spotify.com")
-            {
-                var pathParts = uri.AbsolutePath.Split('/', StringSplitOptions.RemoveEmptyEntries);
-                if (pathParts.Length >= 2 && pathParts[0] == "album")
-                {
-                    return pathParts[1];
-                }
-                
-            }
-            else if (uri.Scheme == "spotify")
-                // if they enter a URI for some reason
-            {
-                var parts = uri.AbsolutePath.Split(":");
-                if (parts.Length == 3 && parts[1] == "album")
-                {
-                    return parts[2];
-                }
-            }
-
-            throw new ArgumentException("Not valid Spotify url");
-        }
     }
 }

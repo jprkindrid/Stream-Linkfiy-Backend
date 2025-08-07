@@ -1,13 +1,12 @@
 ﻿using Stream_Linkfiy_Backend.DTOs.Spotify;
 using Stream_Linkfiy_Backend.Interfaces;
-using System.Runtime.Intrinsics.X86;
+using Stream_Linkfiy_Backend.Helpers;
 
 namespace Stream_Linkfiy_Backend.Services
 {
     public class SpotifyTrackService : ISpotifyTrackService
     {
-        private const string spotifyApiTrackUrl = "https://api.spotify.com/v1/tracks";
-        private readonly SemaphoreSlim sem = new(1, 1);
+        private const string spotifyApiUrl = "https://api.spotify.com/v1";
         private readonly IHttpClientFactory httpClientFactory;
         private readonly ILogger<SpotifyTrackService> logger;
         private readonly ISpotifyTokenService spotifyTokenService;
@@ -18,16 +17,16 @@ namespace Stream_Linkfiy_Backend.Services
             this.logger = logger;
             this.spotifyTokenService = spotifyTokenService;
         }
-        public async Task<SpotifyTrackDto?> GetTrackAsync(string spotifyUrl)
+        public async Task<SpotifyTrackFullDto?> GetByUrlAsync(string spotifyUrl)
         {
-            await sem.WaitAsync();
+            await SpotifyConcurrency.GlobalSemaphore.WaitAsync();
             try
             {
                 var aToken = await spotifyTokenService.GetValidTokenAsync()
                     ?? throw new InvalidOperationException("Error getting spotify access token");
 
-                var trackID = ExtractTrackId(spotifyUrl);
-                var reqUrl = $"{spotifyApiTrackUrl}/{trackID}";
+                var trackID = SpotifyUrlHelper.ExtractSpotifyId(spotifyUrl, "track");
+                var reqUrl = $"{spotifyApiUrl}/tracks/{trackID}";
 
                 var req = new HttpRequestMessage(HttpMethod.Get, reqUrl);
                 req.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(
@@ -39,7 +38,7 @@ namespace Stream_Linkfiy_Backend.Services
                 var resp = await client.SendAsync(req);
                 resp.EnsureSuccessStatusCode();
 
-                SpotifyTrackDto track = await resp.Content.ReadFromJsonAsync<SpotifyTrackDto>()
+                SpotifyTrackFullDto track = await resp.Content.ReadFromJsonAsync<SpotifyTrackFullDto>()
                     ?? throw new Exception("Error deseralizing spotify track response");
 
                 return track;
@@ -51,36 +50,47 @@ namespace Stream_Linkfiy_Backend.Services
             }
             finally
             {
-                sem.Release();
+                SpotifyConcurrency.GlobalSemaphore.Release();
             }
 
         }
 
-        public string ExtractTrackId(string spotifyUrl)
+        public async Task<SpotifySearchResponseDto?> GetByIsrcAsync(string isrc)
         {
-            if (!Uri.TryCreate(spotifyUrl, UriKind.Absolute, out var uri))
-                throw new ArgumentException("Invalid URL format");
-
-            if (uri.Host == "open.spotify.com")
+            await SpotifyConcurrency.GlobalSemaphore.WaitAsync();
+            try
             {
-                var pathParts = uri.AbsolutePath.Split('/', StringSplitOptions.RemoveEmptyEntries);
-                if (pathParts.Length >= 2 && pathParts[0] == "track")
-                {
-                    return pathParts[1];
-                }
-                
-            }
-            else if (uri.Scheme == "spotify")
-                // if they enter a URI for some reason
-            {
-                var parts = uri.AbsolutePath.Split(":");
-                if (parts.Length == 3 && parts[1] == "track")
-                {
-                    return parts[2];
-                }
-            }
+                var aToken = await spotifyTokenService.GetValidTokenAsync()
+                        ?? throw new InvalidOperationException("Error getting spotify access token");
 
-            throw new ArgumentException("Not valid Spotify url");
+                var query = $"isrc:{isrc}";
+                var reqUrl = $"{spotifyApiUrl}/search/?q={Uri.EscapeDataString(query)}&type=track";
+
+                var req = new HttpRequestMessage(HttpMethod.Get, reqUrl);
+                req.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(
+                    "Bearer", aToken.AccessToken);
+
+                var client = httpClientFactory.CreateClient();
+                string reqMessage = $"Making a spotify api request at the path '{reqUrl}'";
+                logger.LogInformation(reqMessage);
+                var resp = await client.SendAsync(req);
+                resp.EnsureSuccessStatusCode();
+
+                SpotifySearchResponseDto track = await resp.Content.ReadFromJsonAsync<SpotifySearchResponseDto>()
+                    ?? throw new Exception("Error deseralizing spotify track response");
+
+                return track;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "error getting spotify track by isrc");
+                return null;
+            }
+            finally
+            {
+                SpotifyConcurrency.GlobalSemaphore.Release();
+            }
         }
+
     }
 }
