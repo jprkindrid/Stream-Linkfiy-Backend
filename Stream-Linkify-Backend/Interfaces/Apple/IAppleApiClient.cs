@@ -2,6 +2,6 @@
 {
     public interface IAppleApiClient
     {
-        Task<T> SendAppleRequestAsync<T>(string reqUrl);
+        Task<T?> SendAppleRequestAsync<T>(string reqUrl);
     }
 }

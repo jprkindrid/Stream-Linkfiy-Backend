@@ -38,42 +38,45 @@ namespace Stream_Linkify_Backend.Services.Apple
         {
             var teamId = RequiredConfig.Get(config, "AppleMusicKit:TeamId");
             var keyId = RequiredConfig.Get(config, "AppleMusicKit:KeyId");
-            var privateKeyPem = RequiredConfig.Get(config, "AppleMusicKit:PrivateKey");
-
-            privateKeyPem = privateKeyPem
-                .Replace("-----BEGIN PRIVATE KEY-----", "")
-                .Replace("-----END PRIVATE KEY-----", "")
-                .Replace("\n", "")
-                .Replace("\r", "")
-                .Trim();
-
-            var privateKeyBytes = Convert.FromBase64String(privateKeyPem);
+            string projectRoot = Path.GetFullPath(
+                    Path.Combine(AppContext.BaseDirectory, @"..\..\..\..")
+);
+            string privateKeyPath = Path.Combine(projectRoot, "Stream-Linkify-Backend", "Keys", $"AuthKey_{keyId}.p8");
+            if (!File.Exists(privateKeyPath))
+            {
+                throw new FileNotFoundException($"Apple Music private key not found at {privateKeyPath}");
+            }
+            string privateKey = File.ReadAllText(privateKeyPath);
 
             using var ecdsa = ECDsa.Create();
-            ecdsa.ImportPkcs8PrivateKey(privateKeyBytes, out _);
+            ecdsa.ImportFromPem(privateKey);
+
+            var securityKey = new ECDsaSecurityKey(ecdsa)
+            {
+                KeyId = keyId,
+            };
 
             var creds = new SigningCredentials(
-                new ECDsaSecurityKey(ecdsa) { KeyId = keyId },
+                securityKey,
                 SecurityAlgorithms.EcdsaSha256
-            );
+                );
 
             var now = DateTimeOffset.UtcNow;
-            var expires = now.AddSeconds(15777000); // Apple's max lifetime (~6 months)
+            var expires = now.AddDays(179);
 
-            var handler = new JwtSecurityTokenHandler();
             var descriptor = new SecurityTokenDescriptor
             {
                 Issuer = teamId,
-                NotBefore = now.UtcDateTime,
                 IssuedAt = now.UtcDateTime,
                 Expires = expires.UtcDateTime,
                 SigningCredentials = creds
             };
 
-            var jwt = handler.CreateToken(descriptor);
-            var token = handler.WriteToken(jwt);
+            var handler = new JwtSecurityTokenHandler();
+            var securityToken = handler.CreateToken(descriptor);
+            string jwt = handler.WriteToken(securityToken);
 
-            return (token, expires.ToUnixTimeSeconds());
+            return (jwt, expires.ToUnixTimeSeconds());
         }
         private bool IsValidToken()
         {

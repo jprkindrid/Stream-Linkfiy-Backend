@@ -10,6 +10,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Keys\AuthKey_4ZKPJMDDF7.p8" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="9.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.7" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.8" />
@@ -22,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Keys\" />
     <Folder Include="Models\" />
   </ItemGroup>
 
