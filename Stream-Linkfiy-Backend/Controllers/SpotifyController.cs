@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Stream_Linkfiy_Backend.Interfaces;
+using Stream_Linkfiy_Backend.Interfaces.Spotify;
 using Stream_Linkfiy_Backend.Services;
 
 namespace Stream_Linkfiy_Backend.Controllers

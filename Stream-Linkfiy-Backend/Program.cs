@@ -21,6 +21,7 @@ builder.Services.AddControllers()
 
 // created services
 builder.Services.AddSpotifyServices();
+builder.Services.AddAppleServices();
 
 var app = builder.Build();
 

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Stream_Linkfiy_Backend.Interfaces;
+using Stream_Linkfiy_Backend.Interfaces.Spotify;
 using Stream_Linkfiy_Backend.Services;
 using System;
 using System.Collections.Generic;

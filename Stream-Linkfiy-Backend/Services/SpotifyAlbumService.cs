@@ -1,6 +1,6 @@
 ﻿using Stream_Linkfiy_Backend.DTOs.Spotify;
-using Stream_Linkfiy_Backend.Interfaces;
 using Stream_Linkfiy_Backend.Helpers;
+using Stream_Linkfiy_Backend.Interfaces.Spotify;
 
 namespace Stream_Linkfiy_Backend.Services
 {
