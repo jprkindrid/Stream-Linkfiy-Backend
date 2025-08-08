@@ -1,4 +1,5 @@
 ﻿using Stream_Linkfiy_Backend.Helpers;
+using Stream_Linkfiy_Backend.Interfaces.Apple;
 using Stream_Linkfiy_Backend.Interfaces.Spotify;
 using Stream_Linkfiy_Backend.Services;
 
@@ -21,7 +22,7 @@ namespace Stream_Linkfiy_Backend.Extensions
         {
             services.AddHttpClient();
 
-            services.AddSingleton<AppleTokenGenerator>();
+            services.AddSingleton<IAppleTokenService, AppleTokenService>();
 
             return services;
         }

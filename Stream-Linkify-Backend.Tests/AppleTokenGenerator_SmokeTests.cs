@@ -1,41 +1,44 @@
-﻿using Microsoft.Extensions.Configuration;
-using Stream_Linkfiy_Backend.Helpers;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging.Abstractions;
+using Stream_Linkfiy_Backend.Services;
+using Xunit;
 
 namespace Stream_Linkify_Backend.Tests
 {
-    public class AppleTokenGenerator_SmokeTests
+    public class AppleTokenService_SmokeTests
     {
         private readonly IConfiguration _config;
 
-        public AppleTokenGenerator_SmokeTests()
+        public AppleTokenService_SmokeTests()
         {
             // Load config from user-secrets for testing
             _config = new ConfigurationBuilder()
-                .AddUserSecrets<AppleTokenGenerator_SmokeTests>()
+                .AddUserSecrets<AppleTokenService_SmokeTests>()
                 .Build();
         }
 
         [Fact]
-        public void GenerateDeveloperToken_ShouldProduceValidJwt()
+        public void GetValidToken_ShouldProduceValidJwt()
         {
-            var generator = new AppleTokenGenerator(_config);
+            // Arrange
+            var service = new AppleTokenService(_config, NullLogger<AppleTokenService>.Instance);
 
-            var token = generator.GenerateDeveloperToken();
+            // Act
+            var token = service.GetValidToken();
 
+            // Assert - token is not null or empty
             Assert.False(string.IsNullOrWhiteSpace(token));
 
             var handler = new JwtSecurityTokenHandler();
             var jwt = handler.ReadJwtToken(token);
 
+            // Header checks
             Assert.Equal("ES256", jwt.Header["alg"]);
             Assert.Equal(_config["AppleMusicKit:KeyId"], jwt.Header["kid"]);
 
+            // Payload checks
             Assert.Equal(_config["AppleMusicKit:TeamId"], jwt.Payload["iss"]);
 
             var iat = Convert.ToInt64(jwt.Payload["iat"]);
@@ -46,8 +49,9 @@ namespace Stream_Linkify_Backend.Tests
 
             Assert.True(issuedAt <= DateTimeOffset.UtcNow.AddMinutes(1), "IssuedAt is too far in the future");
             Assert.True(expiresAt > issuedAt, "Expiration must be after IssuedAt");
+
             var maxLifetimeSeconds = 15777000; // Apple's max allowed
-            var actualLifetimeSeconds = (exp - iat);
+            var actualLifetimeSeconds = exp - iat;
 
             Assert.True(actualLifetimeSeconds <= maxLifetimeSeconds,
                 $"Expiration must be <= {maxLifetimeSeconds} seconds (~6 months)");

@@ -44,7 +44,7 @@ namespace Stream_Linkfiy_Backend.Services
             }
         }
 
-        public async Task<SpotifyAccessTokenDto> RefreshTokenAsync()
+        private async Task<SpotifyAccessTokenDto> RefreshTokenAsync()
         {
             var client = httpClientFactory.CreateClient();
             var clientId = RequiredConfig.Get(config, "Spotify:ClientId");
@@ -76,7 +76,7 @@ namespace Stream_Linkfiy_Backend.Services
 
         }
 
-        public bool IsValidToken()
+        private bool IsValidToken()
         {
             if (token == null)
                 return false;
