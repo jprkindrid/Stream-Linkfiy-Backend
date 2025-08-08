@@ -1,6 +1,6 @@
-﻿using Stream_Linkfiy_Backend.DTOs.Spotify;
+﻿using Stream_Linkify_Backend.DTOs.Spotify;
 
-namespace Stream_Linkfiy_Backend.Interfaces.Spotify
+namespace Stream_Linkify_Backend.Interfaces.Spotify
 {
     public interface ISpotifyTokenService
     {

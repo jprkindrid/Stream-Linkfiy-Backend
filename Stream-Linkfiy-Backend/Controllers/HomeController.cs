@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace Stream_Linkfiy_Backend.Controllers
+namespace Stream_Linkify_Backend.Controllers
 {
     [ApiController]
     [Route("/")]

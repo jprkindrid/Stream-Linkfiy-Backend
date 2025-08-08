@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36310.24
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stream-Linkify-Backend", "Stream-Linkfiy-Backend\Stream-Linkfiy-Backend.csproj", "{B37A3595-67A6-49F1-A403-D4F58C210565}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stream-Linkify-Backend", "Stream-Linkfiy-Backend\Stream-Linkify-Backend.csproj", "{B37A3595-67A6-49F1-A403-D4F58C210565}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stream-Linkify-Backend.Tests", "Stream-Linkify-Backend.Tests\Stream-Linkify-Backend.Tests.csproj", "{654F529D-F433-4C20-9CFA-0DA071397CEF}"
 EndProject

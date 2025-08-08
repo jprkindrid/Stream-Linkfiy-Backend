@@ -1,10 +1,10 @@
-﻿using Stream_Linkfiy_Backend.DTOs.Spotify;
-using Stream_Linkfiy_Backend.Helpers;
-using Stream_Linkfiy_Backend.Interfaces.Spotify;
+﻿using Stream_Linkify_Backend.DTOs.Spotify;
+using Stream_Linkify_Backend.Helpers;
+using Stream_Linkify_Backend.Interfaces.Spotify;
 using System.Text;
 using System.Text.Json;
 
-namespace Stream_Linkfiy_Backend.Services
+namespace Stream_Linkify_Backend.Services.Spotify
 {
     public class SpotifyTokenService : ISpotifyTokenService
     {

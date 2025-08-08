@@ -1,22 +1,52 @@
-﻿using System;
-using System.IdentityModel.Tokens.Jwt;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Stream_Linkfiy_Backend.Services;
+using Stream_Linkify_Backend.Interfaces.Apple;
+using Stream_Linkify_Backend.Services.Apple;
+using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Stream_Linkify_Backend.Tests
 {
-    public class AppleTokenService_SmokeTests
+    public class AppleService_SmokeTests
     {
         private readonly IConfiguration _config;
+        private readonly ServiceProvider _serviceProvider;
 
-        public AppleTokenService_SmokeTests()
+        public AppleService_SmokeTests()
         {
-            // Load config from user-secrets for testing
+            var services = new ServiceCollection();
+
             _config = new ConfigurationBuilder()
-                .AddUserSecrets<AppleTokenService_SmokeTests>()
+                .AddUserSecrets<AppleService_SmokeTests>() // Make sure secrets contain AppleMusicKit keys
                 .Build();
+
+            services.AddSingleton<IConfiguration>(_config);
+
+            // Logging & HTTP
+            services.AddLogging(b => b.AddConsole());
+            services.AddHttpClient();
+
+            // Core Apple services
+            services.AddSingleton<IAppleApiClient, AppleApiClient>();
+            services.AddSingleton<IAppleTokenService, AppleTokenService>();
+            services.AddScoped<IAppleTrackService, AppleTrackService>();
+
+            _serviceProvider = services.BuildServiceProvider();
+        }
+
+        [Fact]
+        public async Task GetValidTokenAsync_ReturnsToken()
+        {
+            var svc = _serviceProvider.GetRequiredService<IAppleTokenService>();
+
+            var token = await Task.FromResult(svc.GetValidToken()); // Apple token is sync in your code
+
+            Assert.NotNull(token);
+            Assert.False(string.IsNullOrWhiteSpace(token));
         }
 
         [Fact]
@@ -55,6 +85,44 @@ namespace Stream_Linkify_Backend.Tests
 
             Assert.True(actualLifetimeSeconds <= maxLifetimeSeconds,
                 $"Expiration must be <= {maxLifetimeSeconds} seconds (~6 months)");
+        }
+
+        [Fact]
+        public async Task GetTrackByUrlAsync_ReturnsTrack()
+        {
+            // Arrange
+            var trackService = _serviceProvider.GetRequiredService<IAppleTrackService>();
+
+            // TODO: Fill in a valid Apple Music track URL
+            var testTrackUrl = "https://music.apple.com/us/album/wounded/1825854595?i=1825854596";
+
+            // Act
+            var track = await trackService.GetTrackByUrlAsync(testTrackUrl);
+
+            // Assert
+            Assert.NotNull(track);
+            Assert.False(string.IsNullOrWhiteSpace(track!.Attributes.Name));
+            Assert.False(string.IsNullOrWhiteSpace(track.Attributes.ArtistName));
+            Assert.False(string.IsNullOrWhiteSpace(track.Attributes.Isrc));
+        }
+
+        [Fact]
+        public async Task GetTrackByIsrcAsync_ReturnsTrack()
+        {
+            // Arrange
+            var trackService = _serviceProvider.GetRequiredService<IAppleTrackService>();
+
+            // TODO: Fill in a valid ISRC
+            var testIsrc = "GBRKQ2482423";
+
+            // Act
+            var track = await trackService.GetTrackByIsrcAsync(testIsrc);
+
+            // Assert
+            Assert.NotNull(track);
+            Assert.False(string.IsNullOrWhiteSpace(track!.Attributes.Name));
+            Assert.False(string.IsNullOrWhiteSpace(track.Attributes.ArtistName));
+            Assert.False(string.IsNullOrWhiteSpace(track.Attributes.Isrc));
         }
     }
 }

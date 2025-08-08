@@ -1,10 +1,10 @@
 ﻿using Microsoft.IdentityModel.Tokens;
-using Stream_Linkfiy_Backend.Helpers;
-using Stream_Linkfiy_Backend.Interfaces.Apple;
+using Stream_Linkify_Backend.Helpers;
+using Stream_Linkify_Backend.Interfaces.Apple;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Cryptography;
 
-namespace Stream_Linkfiy_Backend.Services
+namespace Stream_Linkify_Backend.Services.Apple
 {
     public class AppleTokenService : IAppleTokenService
     {

@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Stream_Linkfiy_Backend.Interfaces.Spotify;
-using Stream_Linkfiy_Backend.Services;
+using Stream_Linkify_Backend.Interfaces.Spotify;
+using Stream_Linkify_Backend.Services.Spotify;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -29,6 +29,7 @@ namespace Stream_Linkify_Backend.Tests
             services.AddSingleton<IConfiguration>(config);
 
             // Core Spotify services
+            services.AddSingleton<ISpotifyApiClient, SpotifyApiClient>();
             services.AddSingleton<ISpotifyTokenService, SpotifyTokenService>();
             services.AddSingleton<ISpotifyTrackService, SpotifyTrackService>();
             services.AddSingleton<ISpotifyAlbumService, SpotifyAlbumService>();

@@ -1,4 +1,4 @@
-﻿namespace Stream_Linkfiy_Backend.Helpers
+﻿namespace Stream_Linkify_Backend.Helpers
 {
     public static class RequiredConfig
     {

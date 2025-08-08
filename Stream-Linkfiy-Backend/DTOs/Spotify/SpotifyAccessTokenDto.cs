@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Stream_Linkfiy_Backend.DTOs.Spotify
+namespace Stream_Linkify_Backend.DTOs.Spotify
 {
     public record SpotifyAccessTokenDto
     {

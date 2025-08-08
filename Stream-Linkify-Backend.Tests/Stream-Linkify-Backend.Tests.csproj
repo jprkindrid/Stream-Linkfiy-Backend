@@ -29,7 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Stream-Linkfiy-Backend\Stream-Linkfiy-Backend.csproj" />
+  <ProjectReference Include="..\Stream-Linkfiy-Backend\Stream-Linkify-Backend.csproj" />
   </ItemGroup>
 
   <ItemGroup>

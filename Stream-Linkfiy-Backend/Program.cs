@@ -1,7 +1,7 @@
 using Scalar.AspNetCore;
-using Stream_Linkfiy_Backend.Interfaces;
-using Stream_Linkfiy_Backend.Services;
-using Stream_Linkfiy_Backend.Extensions;
+using Stream_Linkify_Backend.Interfaces;
+using Stream_Linkify_Backend.Services;
+using Stream_Linkify_Backend.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,7 +19,9 @@ builder.Services.AddControllers()
         options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
     });
 
+
 // created services
+builder.Services.AddHttpClient();
 builder.Services.AddSpotifyServices();
 builder.Services.AddAppleServices();
 
