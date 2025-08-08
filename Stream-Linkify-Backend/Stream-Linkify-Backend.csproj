@@ -27,7 +27,6 @@
 
   <ItemGroup>
     <Folder Include="Keys\" />
-    <Folder Include="Models\" />
   </ItemGroup>
 
 </Project>

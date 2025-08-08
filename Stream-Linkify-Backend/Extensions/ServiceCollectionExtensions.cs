@@ -14,6 +14,7 @@ namespace Stream_Linkify_Backend.Extensions
             services.AddSingleton<ISpotifyTokenService, SpotifyTokenService>();
             services.AddScoped<ISpotifyTrackService, SpotifyTrackService>();
             services.AddScoped<ISpotifyAlbumService, SpotifyAlbumService>();
+            services.AddScoped<ISpotifyInput, SpotifyInput>();
 
             return services;
         }
@@ -23,6 +24,7 @@ namespace Stream_Linkify_Backend.Extensions
             services.AddSingleton<IAppleApiClient, AppleApiClient>();
             services.AddSingleton<IAppleTokenService, AppleTokenService>();
             services.AddScoped<IAppleTrackService, AppleTrackService>();
+            services.AddScoped<IAppleInput, AppleInput>();
 
             return services;
         }

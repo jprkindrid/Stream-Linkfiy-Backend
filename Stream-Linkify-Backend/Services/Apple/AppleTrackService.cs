@@ -8,10 +8,13 @@ namespace Stream_Linkify_Backend.Services.Apple
     public class AppleTrackService : IAppleTrackService
     {
         private readonly IAppleApiClient appleApiClient;
+        private readonly ILogger<AppleTrackService> logger;
 
-        public AppleTrackService(IAppleApiClient appleApiClient)
+        public AppleTrackService(IAppleApiClient appleApiClient,
+            ILogger<AppleTrackService> logger)
         {
             this.appleApiClient = appleApiClient;
+            this.logger = logger;
         }
 
         public async Task<AppleSongDataDto?> GetTrackByUrlAsync(string url)
@@ -20,6 +23,13 @@ namespace Stream_Linkify_Backend.Services.Apple
             var reqUrl = $"https://api.music.apple.com/v1/catalog/{region}/songs/{trackId}";
 
             var result = await appleApiClient.SendAppleRequestAsync<AppleSongResponse>(reqUrl);
+
+            if (result?.Data == null || !result.Data.Any())
+            {
+                string noDataWarning = $"Apple API returned no data for {reqUrl}";
+                logger.LogWarning(noDataWarning);
+                return null;
+            }
             
             return result.Data.FirstOrDefault();
 

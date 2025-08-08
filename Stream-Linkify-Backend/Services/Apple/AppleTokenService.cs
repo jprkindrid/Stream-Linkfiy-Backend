@@ -38,18 +38,27 @@ namespace Stream_Linkify_Backend.Services.Apple
         {
             var teamId = RequiredConfig.Get(config, "AppleMusicKit:TeamId");
             var keyId = RequiredConfig.Get(config, "AppleMusicKit:KeyId");
-            string projectRoot = Path.GetFullPath(
-                    Path.Combine(AppContext.BaseDirectory, @"..\..\..\..")
-);
-            string privateKeyPath = Path.Combine(projectRoot, "Stream-Linkify-Backend", "Keys", $"AuthKey_{keyId}.p8");
-            if (!File.Exists(privateKeyPath))
+
+            string? privateKeyPem = Environment.GetEnvironmentVariable("APPLE_PRIVATE_KEY");
+
+            if (string.IsNullOrWhiteSpace(privateKeyPem))
             {
-                throw new FileNotFoundException($"Apple Music private key not found at {privateKeyPath}");
+                string privateKeyPath = Path.Combine("Keys", $"AuthKey_{keyId}.p8");
+
+                if (!Path.IsPathRooted(privateKeyPath))
+                {
+                    string projectRoot = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"..\..\.."));
+                    privateKeyPath = Path.Combine(projectRoot, privateKeyPath);
+                }
+
+                if (!File.Exists(privateKeyPath))
+                    throw new FileNotFoundException($"Apple Music private key not found at {privateKeyPath}");
+
+                privateKeyPem = File.ReadAllText(privateKeyPath);
             }
-            string privateKey = File.ReadAllText(privateKeyPath);
 
             using var ecdsa = ECDsa.Create();
-            ecdsa.ImportFromPem(privateKey);
+            ecdsa.ImportFromPem(privateKeyPem);
 
             var securityKey = new ECDsaSecurityKey(ecdsa)
             {

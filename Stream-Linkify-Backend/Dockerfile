@@ -27,4 +27,5 @@ RUN dotnet publish "./Stream-Linkify-Backend.csproj" -c $BUILD_CONFIGURATION -o 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+COPY Keys/AuthKey_7B8U8XLL3X.p8 /app/Keys/AuthKey_7B8U8XLL3X.p8
 ENTRYPOINT ["dotnet", "Stream-Linkify-Backend.dll"]
