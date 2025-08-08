@@ -363,6 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 
 # Keys n stuff
-apple_authkey.p8
-/Stream-Linkfiy-Backend/Keys/AuthKey_4ZKPJMDDF7.p8
-/Stream-Linkfiy-Backend/Keys/AuthKey_7B8U8XLL3X.p8
+*.p8
