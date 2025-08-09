@@ -1,5 +1,8 @@
-﻿using Stream_Linkify_Backend.Interfaces.Apple;
+﻿using Stream_Linkify_Backend.DTOs;
+using Stream_Linkify_Backend.DTOs.Apple;
+using Stream_Linkify_Backend.Interfaces.Apple;
 using Stream_Linkify_Backend.Interfaces.Spotify;
+using Stream_Linkify_Backend.Mappers;
 using Stream_Linkify_Backend.Models;
 using Stream_Linkify_Backend.Services.Spotify;
 
@@ -22,16 +25,20 @@ namespace Stream_Linkify_Backend.Services.Apple
             this.appleTrackService = appleTrackService;
         }
 
-        public async Task<TrackModel> getUrlsAsync(string appleUrl)
+        public async Task<TrackReturnDto> getUrlsAsync(string appleUrl)
         {
+
+
+            AppleSongDataDto? appleTrack = await appleTrackService.GetTrackByUrlAsync(appleUrl)
+                ?? throw new InvalidOperationException("apple track not found");
             var result = new TrackModel
             {
-                AppleMusicUrl = appleUrl,
+                ISRC = appleTrack.Attributes.Isrc,
+                AppleMusicUrl = appleTrack.Attributes.Url,
+                SongName = appleTrack.Attributes.Name,
+                AristNames = [appleTrack.Attributes.ArtistName],
+                AlbumName = appleTrack.Attributes.AlbumName,
             };
-
-            var appleTrack = await appleTrackService.GetTrackByUrlAsync(appleUrl);
-            if (appleTrack == null)
-                throw new InvalidOperationException("apple track not found");
 
             result.ISRC = appleTrack.Attributes.Isrc;
 
@@ -51,6 +58,7 @@ namespace Stream_Linkify_Backend.Services.Apple
                 if (firstTrack != null)
                 {
                     result.SpotifyUrl = $"https://open.spotify.com/track/{firstTrack.Id}";
+                    result.AristNames = [.. firstTrack.Artists.Select(a => a.Name)];
                 }
                 else
                 {
@@ -59,7 +67,7 @@ namespace Stream_Linkify_Backend.Services.Apple
                 }
             }
 
-            return result;
+            return result.ToReturnDo();
         }
     }
 }

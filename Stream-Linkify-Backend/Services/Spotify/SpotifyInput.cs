@@ -1,5 +1,8 @@
-﻿using Stream_Linkify_Backend.Interfaces.Apple;
+﻿using Stream_Linkify_Backend.DTOs;
+using Stream_Linkify_Backend.DTOs.Spotify;
+using Stream_Linkify_Backend.Interfaces.Apple;
 using Stream_Linkify_Backend.Interfaces.Spotify;
+using Stream_Linkify_Backend.Mappers;
 using Stream_Linkify_Backend.Models;
 
 namespace Stream_Linkify_Backend.Services.Spotify
@@ -21,19 +24,21 @@ namespace Stream_Linkify_Backend.Services.Spotify
             this.appleTrackService = appleTrackService;
         }
 
-        public async Task<TrackModel> getUrlsAsync(string spotifyUrl)
+        public async Task<TrackReturnDto> getUrlsAsync(string spotifyUrl)
         {
+            
+            // Get Spotify track
+            SpotifyTrackFullDto? spotifyTrack = await spotifyTrackService.GetByUrlAsync(spotifyUrl)
+                ?? throw new InvalidOperationException("Spotify track not found");
+            
             var result = new TrackModel
             {
-                SpotifyUrl = spotifyUrl
+                ISRC = spotifyTrack.ExternalIds.Isrc,
+                SpotifyUrl = spotifyUrl,
+                AristNames = [.. spotifyTrack.Artists.Select(a => a.Name)],
+                SongName = spotifyTrack.Name,
+                AlbumName = spotifyTrack.Album.Name
             };
-
-            // Get Spotify track
-            var spotifyTrack = await spotifyTrackService.GetByUrlAsync(spotifyUrl);
-            if (spotifyTrack == null)
-                throw new InvalidOperationException("Spotify track not found");
-
-            result.ISRC = spotifyTrack.ExternalIds.Isrc;
 
             // Get AppleMusic track by ISRC
             var appleTrack = await appleTrackService.GetTrackByIsrcAsync(result.ISRC!);
@@ -48,7 +53,7 @@ namespace Stream_Linkify_Backend.Services.Spotify
                 result.AppleMusicUrl = appleTrack.Attributes.Url;
             }
 
-            return result;
+            return result.ToReturnDo();
         }
     }
 }

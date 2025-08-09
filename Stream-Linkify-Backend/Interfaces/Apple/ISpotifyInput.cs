@@ -1,9 +1,10 @@
-﻿using Stream_Linkify_Backend.Models;
+﻿using Stream_Linkify_Backend.DTOs;
+using Stream_Linkify_Backend.Models;
 
 namespace Stream_Linkify_Backend.Interfaces.Spotify
 {
     public interface IAppleInput
     {
-        Task<TrackModel> getUrlsAsync(string appleUrl);
+        Task<TrackReturnDto> getUrlsAsync(string appleUrl);
     }
 }
