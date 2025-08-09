@@ -57,7 +57,7 @@ namespace Stream_Linkify_Backend.Services.Apple
                 privateKeyPem = File.ReadAllText(privateKeyPath);
             }
 
-            using var ecdsa = ECDsa.Create();
+            var ecdsa = ECDsa.Create();
             ecdsa.ImportFromPem(privateKeyPem);
 
             var securityKey = new ECDsaSecurityKey(ecdsa)

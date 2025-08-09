@@ -1,6 +1,7 @@
 ﻿using Stream_Linkify_Backend.Helpers;
 using Stream_Linkify_Backend.Interfaces.Apple;
 using Stream_Linkify_Backend.Interfaces.Spotify;
+using Stream_Linkify_Backend.Interfaces.Tidal;
 using Stream_Linkify_Backend.Services.Apple;
 using Stream_Linkify_Backend.Services.Spotify;
 
@@ -27,6 +28,13 @@ namespace Stream_Linkify_Backend.Extensions
             services.AddScoped<IAppleInput, AppleInput>();
 
             return services;
+        }
+
+        public static IServiceCollection AddTidalServices(this IServiceCollection serivces)
+        {
+            serivces.AddSingleton<ITidalTokenService, ITidalTokenService>();
+
+            return serivces;
         }
     }
 }

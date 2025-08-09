@@ -34,8 +34,8 @@ namespace Stream_Linkify_Backend.Controllers
             {
                 TrackReturnDto? resultTrack = uri.Host.ToLower() switch
                 {
-                    "open.spotify.com" => await spotifyInput.getUrlsAsync(request.TrackUrl),
-                    "music.apple.com" => await appleInput.getUrlsAsync(request.TrackUrl),
+                    "open.spotify.com" => await spotifyInput.GetUrlsAsync(request.TrackUrl),
+                    "music.apple.com" => await appleInput.GetUrlsAsync(request.TrackUrl),
                     _ => null
                 };
 

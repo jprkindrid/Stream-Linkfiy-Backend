@@ -5,6 +5,6 @@ namespace Stream_Linkify_Backend.Interfaces.Spotify
 {
     public interface IAppleInput
     {
-        Task<TrackReturnDto> getUrlsAsync(string appleUrl);
+        Task<TrackReturnDto> GetUrlsAsync(string appleUrl);
     }
 }

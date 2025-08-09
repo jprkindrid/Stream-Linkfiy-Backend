@@ -24,6 +24,7 @@ builder.Services.AddControllers()
 builder.Services.AddHttpClient();
 builder.Services.AddSpotifyServices();
 builder.Services.AddAppleServices();
+builder.Services.AddTidalServices();
 
 var app = builder.Build();
 

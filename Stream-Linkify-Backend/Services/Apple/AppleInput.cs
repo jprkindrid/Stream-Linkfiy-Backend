@@ -25,7 +25,7 @@ namespace Stream_Linkify_Backend.Services.Apple
             this.appleTrackService = appleTrackService;
         }
 
-        public async Task<TrackReturnDto> getUrlsAsync(string appleUrl)
+        public async Task<TrackReturnDto> GetUrlsAsync(string appleUrl)
         {
 
 

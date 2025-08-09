@@ -24,7 +24,7 @@ namespace Stream_Linkify_Backend.Services.Spotify
             this.appleTrackService = appleTrackService;
         }
 
-        public async Task<TrackReturnDto> getUrlsAsync(string spotifyUrl)
+        public async Task<TrackReturnDto> GetUrlsAsync(string spotifyUrl)
         {
             
             // Get Spotify track
