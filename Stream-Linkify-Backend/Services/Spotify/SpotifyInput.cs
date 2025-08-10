@@ -2,6 +2,7 @@
 using Stream_Linkify_Backend.DTOs.Spotify;
 using Stream_Linkify_Backend.Interfaces.Apple;
 using Stream_Linkify_Backend.Interfaces.Spotify;
+using Stream_Linkify_Backend.Interfaces.Tidal;
 using Stream_Linkify_Backend.Mappers;
 using Stream_Linkify_Backend.Models;
 

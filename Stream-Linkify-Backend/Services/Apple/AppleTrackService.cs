@@ -2,6 +2,7 @@
 using Stream_Linkify_Backend.DTOs.Apple;
 using Stream_Linkify_Backend.Helpers.URLs;
 using Stream_Linkify_Backend.Interfaces.Apple;
+using Stream_Linkify_Backend.Interfaces.Tidal;
 
 namespace Stream_Linkify_Backend.Services.Apple
 {
@@ -40,7 +41,7 @@ namespace Stream_Linkify_Backend.Services.Apple
 
             var result = await appleApiClient.SendAppleRequestAsync<AppleSongResponse>(reqUrl);
 
-            if (result == null || result.Data == null || !result.Data.Any())
+            if (result == null || result.Data == null || !(result.Data.Count == 0))
             {
                 throw new InvalidOperationException("Empty track returned when getting Apple Music track by ISRC");
             }

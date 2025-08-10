@@ -63,10 +63,9 @@ namespace Stream_Linkify_Backend.Services.Tidal
             );
 
             req.Content = new FormUrlEncodedContent(
-                new[]
-                {
+                [
                     new KeyValuePair<string, string>("grant_type", "client_credentials")
-                }
+                ]
             );
 
             var resp = await client.SendAsync(req);
