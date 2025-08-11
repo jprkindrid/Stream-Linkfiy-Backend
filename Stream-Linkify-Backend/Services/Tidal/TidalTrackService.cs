@@ -24,9 +24,22 @@ namespace Stream_Linkify_Backend.Services.Tidal
             return result;
         }
 
-        public Task<TidalSearchResponseDto?> GetTrackByNameAsync(string trackName, string artistName, string? albumName)
+        public async Task<string?> GetTrackUrlByNameAsync(string trackName, string artistName, string isrc)
         {
-            throw new NotImplementedException();
+            var query = $"{trackName}-{artistName}";
+            var reqUrl = $"{tidalApiUrl}/searchResults/{Uri.EscapeDataString(query)}?countryCode=US&include=tracks";
+
+            TidalSearchResponseDto? resp = await tidalApiClient.SendTidalRequestAsync<TidalSearchResponseDto>(reqUrl);
+            if (resp == null || resp.Included.Count == 0)
+                return null;
+
+            return resp.Included
+                .Select(i => i.DeserializeAttributes<TidalTrackAttributes>())
+                .Where(a => a != null && string.Equals(a.Isrc, isrc, StringComparison.OrdinalIgnoreCase))
+                .SelectMany(a => a!.ExternalLinks)
+                .Select(l => l.Href)
+                .FirstOrDefault(href => !string.IsNullOrEmpty(href));
+
         }
     }
 }

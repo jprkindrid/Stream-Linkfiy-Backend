@@ -35,7 +35,6 @@ namespace Stream_Linkify_Backend.Services.Spotify
             var result = await spotifyApiClient.SendSpotifyRequestAsync<SpotifySearchResponseDto>(reqUrl);
 
             return result;
-
         }
     }
 }
