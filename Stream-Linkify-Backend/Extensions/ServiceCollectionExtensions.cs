@@ -4,6 +4,7 @@ using Stream_Linkify_Backend.Interfaces.Spotify;
 using Stream_Linkify_Backend.Interfaces.Tidal;
 using Stream_Linkify_Backend.Services.Apple;
 using Stream_Linkify_Backend.Services.Spotify;
+using Stream_Linkify_Backend.Services.Tidal;
 
 namespace Stream_Linkify_Backend.Extensions
 {
@@ -32,7 +33,9 @@ namespace Stream_Linkify_Backend.Extensions
 
         public static IServiceCollection AddTidalServices(this IServiceCollection serivces)
         {
+            serivces.AddSingleton<ITidalApiClient, TidalApiClient>();
             serivces.AddSingleton<ITidalTokenService, ITidalTokenService>();
+            serivces.AddScoped<ITidalTrackService, TidalTrackService>();
 
             return serivces;
         }

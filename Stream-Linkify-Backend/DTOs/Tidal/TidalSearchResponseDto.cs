@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
-public record TidalSongDataDto(
+public record TidalSearchResponseDto(
     [property: JsonPropertyName("data")] TidalSearchData Data,
     [property: JsonPropertyName("links")] TidalLinks Links,
     [property: JsonPropertyName("included")] List<TidalIncludedItem> Included
@@ -36,7 +36,13 @@ public record TidalIncludedItem(
     [property: JsonPropertyName("id")] string Id,
     [property: JsonPropertyName("type")] string Type,
     [property: JsonPropertyName("attributes")] JsonElement Attributes
-);
+)
+{
+    public T? DeserializeAttributes<T>()
+    {
+        return Attributes.Deserialize<T>();
+    }
+};
 
 public record TidalExternalLink(
     [property: JsonPropertyName("href")] string Href,

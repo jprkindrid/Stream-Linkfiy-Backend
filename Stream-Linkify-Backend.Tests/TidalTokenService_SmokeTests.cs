@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Stream_Linkify_Backend.DTOs.Tidal;
 using Stream_Linkify_Backend.Interfaces.Tidal;
 using Stream_Linkify_Backend.Services.Tidal;
 using System.Threading.Tasks;
@@ -8,11 +9,11 @@ using Xunit;
 
 namespace Stream_Linkify_Backend.Tests
 {
-    public class TidalTokenService_SmokeTests
+    public class TidalService_SmokeTests
     {
         private readonly ServiceProvider _serviceProvider;
 
-        public TidalTokenService_SmokeTests()
+        public TidalService_SmokeTests()
         {
             var services = new ServiceCollection();
 
@@ -22,15 +23,17 @@ namespace Stream_Linkify_Backend.Tests
 
             // Config from user-secrets + env vars
             var config = new ConfigurationBuilder()
-                .AddUserSecrets<TidalTokenService_SmokeTests>(optional: true)
+                .AddUserSecrets<TidalService_SmokeTests>(optional: true)
                 .AddEnvironmentVariables()
                 .Build();
 
             services.AddSingleton<IConfiguration>(config);
 
-            // Core Tidal services
+            // Core TIDAL services
             services.AddSingleton<ITidalTokenService, TidalTokenService>();
-
+            services.AddSingleton<ITidalApiClient, TidalApiClient>();
+            services.AddSingleton<ITidalTrackService, TidalTrackService>();
+            //services.AddSingleton<ITidalAlbumService, TidalAlbumService>();
 
             _serviceProvider = services.BuildServiceProvider();
         }
@@ -46,30 +49,32 @@ namespace Stream_Linkify_Backend.Tests
             Assert.False(string.IsNullOrWhiteSpace(token!.AccessToken));
         }
 
-        //[Fact]
-        //public async Task GetValidTrackAsync_ReturnsTrack()
-        //{
-        //    var trackService = _serviceProvider.GetRequiredService<ISpotifyTrackService>();
+        [Fact]
+        public async Task GetValidTrackAsync_ReturnsTrack()
+        {
+            var trackService = _serviceProvider.GetRequiredService<ITidalTrackService>();
 
-        //    var exampleTrack = "https://open.spotify.com/track/43eLl2gwEr0fgbFgS11uOh?si=220d34b2d78b4ca7";
+            // Example TIDAL track URL
+            var exampleTrack = "https://tidal.com/browse/track/430298612?u";
 
-        //    var track = await trackService.GetByUrlAsync(exampleTrack);
+            TidalTrackResponseDto? track = await trackService.GetTrackByUrlAsync(exampleTrack);
 
-        //    Assert.NotNull(track);
-        //    Assert.False(string.IsNullOrWhiteSpace(track!.Name));
-        //}
+            Assert.NotNull(track);
+            Assert.False(string.IsNullOrWhiteSpace(track.Data.Attributes.Title));
+        }
 
         //[Fact]
         //public async Task GetValidAlbumAsync_ReturnsAlbum()
         //{
-        //    var albumService = _serviceProvider.GetRequiredService<ISpotifyAlbumService>();
+        //    var albumService = _serviceProvider.GetRequiredService<ITidalAlbumService>();
 
-        //    var exampleAlbum = "https://open.spotify.com/album/27teXombBxDGNa9f5jtOr2?si=R6dKhp2MSc-jKFirPkZzLA";
+        //    // Example TIDAL album URL
+        //    var exampleAlbum = "https://tidal.com/browse/album/445978727";
 
-        //    var album = await albumService.GetByUrlAsync(exampleAlbum);
+        //    var album = await albumService.GetAlbumByUrlAsync(exampleAlbum);
 
         //    Assert.NotNull(album);
-        //    Assert.False(string.IsNullOrWhiteSpace(album!.Name));
+        //    Assert.False(string.IsNullOrWhiteSpace(album!.Attributes.Title));
         //}
     }
 }

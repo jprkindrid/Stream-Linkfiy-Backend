@@ -1,10 +1,10 @@
-﻿using Stream_Linkify_Backend.DTOs.Apple;
+﻿using Stream_Linkify_Backend.DTOs.Tidal;
 
 namespace Stream_Linkify_Backend.Interfaces.Tidal
 {
     public interface ITidalTrackService
     {
-        Task<TidalSongDataDto?> GetTrackByUrlAsync(string url);
-        Task<TidalSongDataDto?> GetTrackByNameAsync(string trackName, string artistName, string? albumName);
+        Task<TidalTrackResponseDto?> GetTrackByUrlAsync(string url);
+        Task<TidalSearchResponseDto?> GetTrackByNameAsync(string trackName, string artistName, string? albumName);
     }
 }
