@@ -14,16 +14,19 @@ namespace Stream_Linkify_Backend.Services.Apple
         private readonly ILogger<AppleInput> logger;
         private readonly ISpotifyTrackService spotifyTrackService;
         private readonly IAppleTrackService appleTrackService;
+        private readonly ITidalTrackService tidalTrackService;
 
         public AppleInput(
             ILogger<AppleInput> logger,
             ISpotifyTrackService spotifyTrackService,
-            IAppleTrackService appleTrackService
+            IAppleTrackService appleTrackService,
+            ITidalTrackService tidalTrackService
             )
         {
             this.logger = logger;
             this.spotifyTrackService = spotifyTrackService;
             this.appleTrackService = appleTrackService;
+            this.tidalTrackService = tidalTrackService;
         }
 
         public async Task<TrackReturnDto> GetUrlsAsync(string appleUrl)
@@ -43,7 +46,7 @@ namespace Stream_Linkify_Backend.Services.Apple
 
             result.ISRC = appleTrack.Attributes.Isrc;
 
-            // Get Spoify Track from ISRC
+            // Get Spotify Track from ISRC
             var spotifyTrack = await spotifyTrackService.GetByIsrcAsync(result.ISRC);
 
             if (spotifyTrack == null)
@@ -60,12 +63,24 @@ namespace Stream_Linkify_Backend.Services.Apple
                 {
                     result.SpotifyUrl = $"https://open.spotify.com/track/{firstTrack.Id}";
                     result.AristNames = [.. firstTrack.Artists.Select(a => a.Name)];
+                    result.AlbumName = firstTrack.Album.Name;
                 }
                 else
                 {
                     logger.LogWarning("No track item found in Spotify search results for ISRC {ISRC}", result.ISRC);
                     result.SpotifyUrl = null;
                 }
+            }
+
+            // Get Tidal Track from artist, track title, isrc
+            var tidalUrl = await tidalTrackService.GetTrackUrlByNameAsync(result.SongName, result.AristNames.First(), result.ISRC);
+            if (tidalUrl != null)
+            {
+                result.TidalUrl = tidalUrl;
+            }
+            else
+            {
+                result.TidalUrl = null;
             }
 
             return result.ToReturnDo();

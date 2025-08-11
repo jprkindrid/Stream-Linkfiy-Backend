@@ -14,6 +14,7 @@ namespace Stream_Linkify_Backend.Mappers
                 AlbumName = track.AlbumName,
                 SpotifyUrl = track.SpotifyUrl,
                 AppleMusicUrl = track.AppleMusicUrl,
+                TidalUrl = track.TidalUrl
             };
         }
     }

@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Stream_Linkify_Backend.DTOs.Tidal;
+using Stream_Linkify_Backend.Interfaces.Apple;
 using Stream_Linkify_Backend.Interfaces.Tidal;
 using Stream_Linkify_Backend.Services.Tidal;
 using System.Threading.Tasks;
@@ -61,6 +62,33 @@ namespace Stream_Linkify_Backend.Tests
 
             Assert.NotNull(track);
             Assert.False(string.IsNullOrWhiteSpace(track.Data.Attributes.Title));
+        }
+
+        [Fact]
+        public async Task GetTrackByUrlAsync_ReturnsTrack()
+        {
+            var trackService = _serviceProvider.GetRequiredService<ITidalTrackService>();
+
+            var testUrl = "https://tidal.com/browse/track/430298612?u";
+
+            var track = await trackService.GetTrackByUrlAsync(testUrl);
+
+            Assert.NotNull(track);
+            Assert.False(string.IsNullOrWhiteSpace(track.Data.Attributes.Isrc));
+            Assert.False(string.IsNullOrWhiteSpace(track.Data.Attributes.Title));
+        }
+        [Fact]
+        public async Task GetTrackByNameAsync_ReturnsTrack()
+        {
+            var trackService = _serviceProvider.GetRequiredService<ITidalTrackService>();
+
+            var testArtist = "Makay";
+            var testTrack = "Drifting Dawn";
+            var testIsrc = "GBWUL2540497";
+
+            var trackUrl = await trackService.GetTrackUrlByNameAsync(testTrack, testArtist, testIsrc);
+
+            Assert.False(string.IsNullOrWhiteSpace(trackUrl));
         }
 
         //[Fact]

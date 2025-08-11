@@ -25,13 +25,13 @@ namespace Stream_Linkify_Backend.Services.Apple
 
             var result = await appleApiClient.SendAppleRequestAsync<AppleSongResponse>(reqUrl);
 
-            if (result?.Data == null || !result.Data.Any())
+            if (result == null || result.Data == null || result.Data.Count == 0)
             {
-                string noDataWarning = $"Apple API returned no data for {reqUrl}";
-                logger.LogWarning(noDataWarning);
+                logger.LogWarning("Apple API returned no data for {Url}", reqUrl);
+                logger.LogDebug("Apple Music Response: {@Result}", result);
                 return null;
             }
-            
+
             return result.Data.FirstOrDefault();
 
         }
@@ -41,9 +41,11 @@ namespace Stream_Linkify_Backend.Services.Apple
 
             var result = await appleApiClient.SendAppleRequestAsync<AppleSongResponse>(reqUrl);
 
-            if (result == null || result.Data == null || !(result.Data.Count == 0))
+            if (result == null || result.Data == null || result.Data.Count == 0)
             {
-                throw new InvalidOperationException("Empty track returned when getting Apple Music track by ISRC");
+                logger.LogWarning("Apple API returned no data for {Url}", reqUrl);
+                logger.LogDebug("Apple Music Response: {@Result}", result);
+                return null;
             }
 
             return result.Data.FirstOrDefault();

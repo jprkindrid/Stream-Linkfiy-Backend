@@ -34,8 +34,9 @@ namespace Stream_Linkify_Backend.Extensions
         public static IServiceCollection AddTidalServices(this IServiceCollection serivces)
         {
             serivces.AddSingleton<ITidalApiClient, TidalApiClient>();
-            serivces.AddSingleton<ITidalTokenService, ITidalTokenService>();
+            serivces.AddSingleton<ITidalTokenService, TidalTokenService>();
             serivces.AddScoped<ITidalTrackService, TidalTrackService>();
+            serivces.AddScoped<ITidalInput, TidalInput>();
 
             return serivces;
         }

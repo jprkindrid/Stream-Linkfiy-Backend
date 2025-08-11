@@ -29,5 +29,6 @@ namespace Stream_Linkify_Backend.Models
         public string? AlbumName { get; set; }
         public string? SpotifyUrl { get; set; }
         public string? AppleMusicUrl { get; set; }
+        public string? TidalUrl { get; set; }
     }
 }
