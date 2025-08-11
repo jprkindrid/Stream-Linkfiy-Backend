@@ -40,7 +40,7 @@ namespace Stream_Linkify_Backend.Services.Apple
                 ISRC = appleTrack.Attributes.Isrc,
                 AppleMusicUrl = appleTrack.Attributes.Url,
                 SongName = appleTrack.Attributes.Name,
-                AristNames = [appleTrack.Attributes.ArtistName],
+                AritstNames = [appleTrack.Attributes.ArtistName],
                 AlbumName = appleTrack.Attributes.AlbumName,
             };
 
@@ -62,7 +62,7 @@ namespace Stream_Linkify_Backend.Services.Apple
                 if (firstTrack != null)
                 {
                     result.SpotifyUrl = $"https://open.spotify.com/track/{firstTrack.Id}";
-                    result.AristNames = [.. firstTrack.Artists.Select(a => a.Name)];
+                    result.AritstNames = [.. firstTrack.Artists.Select(a => a.Name)];
                     result.AlbumName = firstTrack.Album.Name;
                 }
                 else
@@ -73,7 +73,7 @@ namespace Stream_Linkify_Backend.Services.Apple
             }
 
             // Get Tidal Track from artist, track title, isrc
-            var tidalUrl = await tidalTrackService.GetTrackUrlByNameAsync(result.SongName, result.AristNames.First(), result.ISRC);
+            var tidalUrl = await tidalTrackService.GetTrackUrlByNameAsync(result.SongName, result.AritstNames.First(), result.ISRC);
             if (tidalUrl != null)
             {
                 result.TidalUrl = tidalUrl;

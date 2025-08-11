@@ -40,7 +40,7 @@ namespace Stream_Linkify_Backend.Services.Spotify
             {
                 ISRC = spotifyTrack.ExternalIds.Isrc,
                 SpotifyUrl = spotifyUrl,
-                AristNames = [.. spotifyTrack.Artists.Select(a => a.Name)],
+                AritstNames = [.. spotifyTrack.Artists.Select(a => a.Name)],
                 SongName = spotifyTrack.Name,
                 AlbumName = spotifyTrack.Album.Name
             };
@@ -59,7 +59,7 @@ namespace Stream_Linkify_Backend.Services.Spotify
             }
 
             // Get Tidal Track from artist, track title, isrc
-            var tidalUrl = await tidalTrackService.GetTrackUrlByNameAsync(result.SongName, result.AristNames.First(), result.ISRC!);
+            var tidalUrl = await tidalTrackService.GetTrackUrlByNameAsync(result.SongName, result.AritstNames.FirstOrDefault(), result.ISRC!);
             result.TidalUrl = tidalUrl;
 
             return result.ToReturnDo();

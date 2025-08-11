@@ -9,7 +9,7 @@ namespace Stream_Linkify_Backend.Mappers
         {
             return new TrackReturnDto
             {
-                ArtistNames = track.AristNames,
+                ArtistNames = track.AritstNames,
                 SongName = track.SongName,
                 AlbumName = track.AlbumName,
                 SpotifyUrl = track.SpotifyUrl,
