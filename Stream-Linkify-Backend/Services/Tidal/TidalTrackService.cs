@@ -1,4 +1,5 @@
-﻿using Stream_Linkify_Backend.Interfaces.Apple;
+﻿using Stream_Linkify_Backend.Helpers.URLs;
+using Stream_Linkify_Backend.Interfaces.Apple;
 using Stream_Linkify_Backend.Interfaces.Tidal;
 
 namespace Stream_Linkify_Backend.Services.Tidal
@@ -6,16 +7,25 @@ namespace Stream_Linkify_Backend.Services.Tidal
     public class TidalTrackService : ITidalTrackService
 
     {
-        public Task<TidalSongDataDto?> GetTrackByUrlAsync(string tidalUrl)
+        const string tidalApiUrl = "https://openapi.tidal.com/v2";
+        private readonly ITidalApiClient tidalApiClient;
+
+        public TidalTrackService(ITidalApiClient tidalApiClient)
         {
-            throw new NotImplementedException();
+            this.tidalApiClient = tidalApiClient;
+        }
+        public async Task<TidalSongDataDto?> GetTrackByUrlAsync(string tidalUrl)
+        {
+            var trackId = TidalUrlHelper.ExtractTidalId(tidalUrl, "track");
+            var reqUrl = $"{tidalApiUrl}/tracks/{trackId}?countryCode=US&include=tracks";
+
+            var result = await tidalApiClient.SendTidalRequestAsync<TidalSongDataDto>(reqUrl);
+            return result;
         }
 
         public Task<TidalSongDataDto?> GetTrackByNameAsync(string trackName, string artistName, string? albumName)
         {
             throw new NotImplementedException();
         }
-
-
     }
 }
