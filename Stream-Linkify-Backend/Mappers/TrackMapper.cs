@@ -5,7 +5,7 @@ namespace Stream_Linkify_Backend.Mappers
 {
     public static class TrackMapper
     {
-        public static TrackReturnDto ToTrackReturnDo(this TrackModel track)
+        public static TrackReturnDto ToTrackReturnDto(this TrackModel track)
         {
             return new TrackReturnDto
             {

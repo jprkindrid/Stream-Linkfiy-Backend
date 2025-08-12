@@ -71,7 +71,7 @@ namespace Stream_Linkify_Backend.Services.Apple
                 result.TidalUrl = null;
             }
 
-            return result.ToTrackReturnDo();
+            return result.ToTrackReturnDto();
         }
     }
 }

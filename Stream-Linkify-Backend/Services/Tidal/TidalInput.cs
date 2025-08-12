@@ -66,7 +66,7 @@ namespace Stream_Linkify_Backend.Services.Tidal
             result.AppleMusicUrl = appleTrackUrl;
 
 
-            return result.ToTrackReturnDo();
+            return result.ToTrackReturnDto();
 
         }
     }

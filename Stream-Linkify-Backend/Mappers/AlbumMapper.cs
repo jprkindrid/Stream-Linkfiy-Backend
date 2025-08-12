@@ -5,7 +5,7 @@ namespace Stream_Linkify_Backend.Mappers
 {
     public static class AlbumMapper
     {
-        public static AlbumReturnDto ToAlbumReturnDo(this TrackModel album)
+        public static AlbumReturnDto ToAlbumReturnDto(this TrackModel album)
         {
             return new AlbumReturnDto
             {

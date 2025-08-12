@@ -58,7 +58,7 @@ namespace Stream_Linkify_Backend.Services.Spotify
             var tidalUrl = await tidalTrackService.GetTrackUrlByNameAsync(result.SongName, result.AritstNames.FirstOrDefault()!, result.ISRC!);
             result.TidalUrl = tidalUrl;
 
-            return result.ToTrackReturnDo();
+            return result.ToTrackReturnDto();
         }
     }
 }
