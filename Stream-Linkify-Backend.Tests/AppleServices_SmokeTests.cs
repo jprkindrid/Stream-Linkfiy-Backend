@@ -35,6 +35,7 @@ namespace Stream_Linkify_Backend.Tests
             services.AddSingleton<IAppleApiClient, AppleApiClient>();
             services.AddSingleton<IAppleTokenService, AppleTokenService>();
             services.AddScoped<IAppleTrackService, AppleTrackService>();
+            services.AddScoped<IAppleAlbumService, AppleAlbumService>();
 
             _serviceProvider = services.BuildServiceProvider();
         }
@@ -107,9 +108,35 @@ namespace Stream_Linkify_Backend.Tests
 
             var testIsrc = "GBRKQ2482423";
 
-            var track = await trackService.GetTrackByUrlAsync(testIsrc);
+            var track = await trackService.GetTrackUrlByIsrcAsync(testIsrc);
 
             Assert.NotNull(track);
+        }
+
+        [Fact]
+        public async Task GetAlbumByUrlAsync_ReturnsAlbum()
+        {
+            var albumService = _serviceProvider.GetService<IAppleAlbumService>();
+
+            var testAlbumUrl = "https://music.apple.com/us/album/inertia-of-solitude/1808747512";
+
+            var album = await albumService!.GetByUrlAsync(testAlbumUrl);
+
+            Assert.NotNull(album);
+        }
+
+        [Fact]
+        public async Task GetAlbumUrlByUpc_ReturnsUrl()
+        {
+            var albumService = _serviceProvider.GetService<IAppleAlbumService>();
+
+            var exampleAlbumUpc = "199257088807"; // Kindrid - Inertia of Solitude
+            var exampleAlbumLink = "https://music.apple.com/us/album/inertia-of-solitude/1808747512";
+
+            var responseUrl = await albumService!.GetUrlByUpcAsync(exampleAlbumUpc);
+            Assert.NotNull(responseUrl);
+
+            Assert.Equal(responseUrl, exampleAlbumLink);
         }
     }
 }

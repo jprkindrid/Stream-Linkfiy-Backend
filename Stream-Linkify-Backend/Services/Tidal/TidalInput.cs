@@ -31,7 +31,12 @@ namespace Stream_Linkify_Backend.Services.Tidal
             this.appleTrackService = appleTrackService;
         }
 
-        public async Task<TrackReturnDto> GetUrlsAsync(string tidalUrl)
+        public Task<TrackReturnDto> GetAlbumUrlsAsync(string tidalUrl)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<TrackReturnDto> GetTrackUrlsAsync(string tidalUrl)
         {
             TidalTrackResponseDto tidalTrack = await tidalTrackService.GetTrackByUrlAsync(tidalUrl)
                 ?? throw new InvalidOperationException("Tidal track not found");
@@ -61,7 +66,7 @@ namespace Stream_Linkify_Backend.Services.Tidal
             result.AppleMusicUrl = appleTrackUrl;
 
 
-            return result.ToReturnDo();
+            return result.ToTrackReturnDo();
 
         }
     }

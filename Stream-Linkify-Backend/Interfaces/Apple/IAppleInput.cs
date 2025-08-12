@@ -5,6 +5,7 @@ namespace Stream_Linkify_Backend.Interfaces.Apple
 {
     public interface IAppleInput
     {
-        Task<TrackReturnDto> GetUrlsAsync(string appleUrl);
+        Task<TrackReturnDto> GetTrackUrlsAsync(string appleUrl);
+        Task<TrackReturnDto> GetAlbumUrlsAsync(string appleUrl);
     }
 }

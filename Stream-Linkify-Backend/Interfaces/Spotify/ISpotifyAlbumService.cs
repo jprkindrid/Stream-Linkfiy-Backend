@@ -4,7 +4,7 @@ namespace Stream_Linkify_Backend.Interfaces.Spotify
 {
     public interface ISpotifyAlbumService
     {
-        Task<(string? UPC, string? albumName, List<string>? artistNames)> GetByUrlAsync(string url);
+        Task<SpotifyAlbumFullDto?> GetByUrlAsync(string url);
         Task<string?> GetUrlByUpcAsync(string upc);
     }
 }

@@ -29,7 +29,12 @@ namespace Stream_Linkify_Backend.Services.Apple
             this.tidalTrackService = tidalTrackService;
         }
 
-        public async Task<TrackReturnDto> GetUrlsAsync(string appleUrl)
+        public Task<TrackReturnDto> GetAlbumUrlsAsync(string appleUrl)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<TrackReturnDto> GetTrackUrlsAsync(string appleUrl)
         {
 
 
@@ -66,7 +71,7 @@ namespace Stream_Linkify_Backend.Services.Apple
                 result.TidalUrl = null;
             }
 
-            return result.ToReturnDo();
+            return result.ToTrackReturnDo();
         }
     }
 }

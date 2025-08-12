@@ -7,6 +7,7 @@ namespace Stream_Linkify_Backend.Helpers.URLs
     {
         public static (string Region, string AlbumId, string? TrackId) ExtractAppleAlbumIdAndRegion(string appleUrl)
         {
+            appleUrl = appleUrl.Trim();
             if (!Uri.TryCreate(appleUrl, UriKind.Absolute, out var uri))
                 throw new ArgumentException("Invalid URL format");
 

@@ -30,7 +30,7 @@ namespace Stream_Linkify_Backend.Controllers
         }
 
         [HttpPost("tracks")]
-        public async Task<IActionResult> ConvertToAllUrls([FromBody] TrackUrlRequestDto request)
+        public async Task<IActionResult> ConvertToAllTrackUrls([FromBody] TrackUrlRequestDto request)
         {
             if (!Uri.TryCreate(request.TrackUrl, UriKind.Absolute, out var uri))
                 return BadRequest("Invalid URL format");
@@ -39,9 +39,9 @@ namespace Stream_Linkify_Backend.Controllers
             {
                 TrackReturnDto? resultTrack = uri.Host.ToLowerInvariant() switch
                 {
-                    "open.spotify.com" => await spotifyInput.GetUrlsAsync(request.TrackUrl),
-                    "music.apple.com" => await appleInput.GetUrlsAsync(request.TrackUrl),
-                    "listen.tidal.com" or "tidal.com" => await tidalInput.GetUrlsAsync(request.TrackUrl),
+                    "open.spotify.com" => await spotifyInput.GetTrackUrlsAsync(request.TrackUrl),
+                    "music.apple.com" => await appleInput.GetTrackUrlsAsync(request.TrackUrl),
+                    "listen.tidal.com" or "tidal.com" => await tidalInput.GetTrackUrlsAsync(request.TrackUrl),
                     _ => null
                 };
 
@@ -58,6 +58,38 @@ namespace Stream_Linkify_Backend.Controllers
             catch (Exception ex)
             {
                 logger.LogError(ex, "Unexpected error processing URL: {Url}", request.TrackUrl);
+                return StatusCode(500, "An unexpected error occurred");
+            }
+        }
+        [HttpPost("albums")]
+        public async Task<IActionResult> ConvertToAllAlbumUrls([FromBody] AlbumUrlRequestDto request)
+        {
+            if (!Uri.TryCreate(request.AlbumUrl, UriKind.Absolute, out var uri))
+                return BadRequest("Invalid URL format");
+
+            try
+            {
+                TrackReturnDto? resultTrack = uri.Host.ToLowerInvariant() switch
+                {
+                    "open.spotify.com" => await spotifyInput.GetAlbumUrlsAsync(request.AlbumUrl),
+                    "music.apple.com" => await appleInput.GetAlbumUrlsAsync(request.AlbumUrl),
+                    "listen.tidal.com" or "tidal.com" => await tidalInput.GetAlbumUrlsAsync(request.AlbumUrl),
+                    _ => null
+                };
+
+                if (resultTrack == null)
+                    return NotFound("Track not found");
+
+                return Ok(resultTrack);
+            }
+            catch (InvalidOperationException ex)
+            {
+                logger.LogWarning(ex, "Track not found or invalid operation for URL: {Url}", request.AlbumUrl);
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Unexpected error processing URL: {Url}", request.AlbumUrl);
                 return StatusCode(500, "An unexpected error occurred");
             }
         }

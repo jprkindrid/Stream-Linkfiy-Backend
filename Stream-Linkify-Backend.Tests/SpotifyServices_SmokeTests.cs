@@ -70,10 +70,14 @@ namespace Stream_Linkify_Backend.Tests
 
             var exampleAlbum = "https://open.spotify.com/album/27teXombBxDGNa9f5jtOr2?si=R6dKhp2MSc-jKFirPkZzLA";
 
-            var (upc, albumName, artistNames) = await albumService.GetByUrlAsync(exampleAlbum);
+            var spotifyAlbum = await albumService.GetByUrlAsync(exampleAlbum);
 
+            Assert.NotNull(spotifyAlbum);
+
+            var upc = spotifyAlbum.ExternalIds.Upc;
             Assert.NotNull(upc);
-            Assert.NotNull(albumName);
+
+            var artistNames = spotifyAlbum.Artists.Select(x => x.Name).ToList();
             Assert.NotNull(artistNames);
         }
 

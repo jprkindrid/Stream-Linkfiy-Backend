@@ -5,6 +5,7 @@ namespace Stream_Linkify_Backend.Interfaces.Spotify
 {
     public interface ISpotifyInput
     {
-        Task<TrackReturnDto> GetUrlsAsync(string spotifyUrl);
+        Task<TrackReturnDto> GetTrackUrlsAsync(string spotifyUrl);
+        Task<TrackReturnDto> GetAlbumUrlsAsync(string spotifyUrl);
     }
 }

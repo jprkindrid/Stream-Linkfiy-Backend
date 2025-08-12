@@ -18,7 +18,7 @@ namespace Stream_Linkify_Backend.Services.Spotify
             this.spotifyApiClient = spotifyApiClient;
             this.logger = logger;
         }
-        public async Task<(string? UPC, string? albumName, List<string>? artistNames)> GetByUrlAsync(string spotifyUrl)
+        public async Task<SpotifyAlbumFullDto?> GetByUrlAsync(string spotifyUrl)
         {
             var albumID = SpotifyUrlHelper.ExtractSpotifyId(spotifyUrl, "album");
             var reqUrl = $"{spotifyApiUrl}/albums/{albumID}";
@@ -27,12 +27,10 @@ namespace Stream_Linkify_Backend.Services.Spotify
             if (result == null)
             {
                 logger.LogWarning("Could not get Spotify album by url");
-                return (null, null, []);
+                return null;
             }
 
-            var artistNames = result.Artists.Select(a => a.Name).ToList();
-
-            return (result.ExternalIds?.Upc, result.Name, artistNames); 
+            return  result;
         }
 
         public async Task<string?> GetUrlByUpcAsync(string upc)

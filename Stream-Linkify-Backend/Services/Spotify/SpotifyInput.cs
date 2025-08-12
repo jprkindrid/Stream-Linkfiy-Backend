@@ -29,7 +29,12 @@ namespace Stream_Linkify_Backend.Services.Spotify
             this.tidalTrackService = tidalTrackService;
         }
 
-        public async Task<TrackReturnDto> GetUrlsAsync(string spotifyUrl)
+        public Task<TrackReturnDto> GetAlbumUrlsAsync(string spotifyUrl)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<TrackReturnDto> GetTrackUrlsAsync(string spotifyUrl)
         {
             
             // Get Spotify track
@@ -53,7 +58,7 @@ namespace Stream_Linkify_Backend.Services.Spotify
             var tidalUrl = await tidalTrackService.GetTrackUrlByNameAsync(result.SongName, result.AritstNames.FirstOrDefault()!, result.ISRC!);
             result.TidalUrl = tidalUrl;
 
-            return result.ToReturnDo();
+            return result.ToTrackReturnDo();
         }
     }
 }
