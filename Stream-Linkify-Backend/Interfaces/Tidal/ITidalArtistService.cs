@@ -2,6 +2,6 @@
 {
     public interface ITidalArtistService
     {
-        public Task<List<string?>> GetTrackArtistNamesAsync(string trackID);
+        public Task<List<string>?> GetTrackArtistNamesAsync(string trackID);
     }
 }

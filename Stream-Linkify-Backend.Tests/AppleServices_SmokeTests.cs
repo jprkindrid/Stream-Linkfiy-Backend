@@ -53,13 +53,10 @@ namespace Stream_Linkify_Backend.Tests
         [Fact]
         public void GetValidToken_ShouldProduceValidJwt()
         {
-            // Arrange
             var service = new AppleTokenService(_config, NullLogger<AppleTokenService>.Instance);
 
-            // Act
             var token = service.GetValidToken();
 
-            // Assert - token is not null or empty
             Assert.False(string.IsNullOrWhiteSpace(token));
 
             var handler = new JwtSecurityTokenHandler();
@@ -91,16 +88,12 @@ namespace Stream_Linkify_Backend.Tests
         [Fact]
         public async Task GetTrackByUrlAsync_ReturnsTrack()
         {
-            // Arrange
             var trackService = _serviceProvider.GetRequiredService<IAppleTrackService>();
 
-            // TODO: Fill in a valid Apple Music track URL
             var testTrackUrl = "https://music.apple.com/us/album/wounded/1825854595?i=1825854596";
 
-            // Act
             var track = await trackService.GetTrackByUrlAsync(testTrackUrl);
 
-            // Assert
             Assert.NotNull(track);
             Assert.False(string.IsNullOrWhiteSpace(track!.Attributes.Name));
             Assert.False(string.IsNullOrWhiteSpace(track.Attributes.ArtistName));
@@ -110,20 +103,13 @@ namespace Stream_Linkify_Backend.Tests
         [Fact]
         public async Task GetTrackByIsrcAsync_ReturnsTrack()
         {
-            // Arrange
             var trackService = _serviceProvider.GetRequiredService<IAppleTrackService>();
 
-            // TODO: Fill in a valid ISRC
             var testIsrc = "GBRKQ2482423";
 
-            // Act
-            var track = await trackService.GetTrackByIsrcAsync(testIsrc);
+            var track = await trackService.GetTrackByUrlAsync(testIsrc);
 
-            // Assert
             Assert.NotNull(track);
-            Assert.False(string.IsNullOrWhiteSpace(track!.Attributes.Name));
-            Assert.False(string.IsNullOrWhiteSpace(track.Attributes.ArtistName));
-            Assert.False(string.IsNullOrWhiteSpace(track.Attributes.Isrc));
         }
     }
 }

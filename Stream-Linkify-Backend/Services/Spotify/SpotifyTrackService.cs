@@ -41,7 +41,7 @@ namespace Stream_Linkify_Backend.Services.Spotify
 
             if (result == null)
             {
-                logger.LogWarning("Could not get Spotify album by url");
+                logger.LogWarning("Could not get Spotify track for isrc '{isrc}'", isrc);
                 return (null, null, []);
             }
 

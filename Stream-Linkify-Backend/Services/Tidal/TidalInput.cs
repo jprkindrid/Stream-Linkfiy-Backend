@@ -57,10 +57,9 @@ namespace Stream_Linkify_Backend.Services.Tidal
                 result.AritstNames = spotifyArtistNames;
         
             // Apple
-            var appleTrack = await appleTrackService.GetTrackByIsrcAsync(result.ISRC);
-            result.AppleMusicUrl = appleTrack?.Attributes?.Url;
-            if (result.AppleMusicUrl == null)
-                logger.LogWarning("Could not get Apple music track for ISRC: {result.ISRC}", result.ISRC);
+            var appleTrackUrl = await appleTrackService.GetTrackUrlByIsrcAsync(result.ISRC);
+            result.AppleMusicUrl = appleTrackUrl;
+
 
             return result.ToReturnDo();
 

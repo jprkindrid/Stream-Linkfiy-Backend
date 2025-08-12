@@ -19,7 +19,7 @@ namespace Stream_Linkify_Backend.Services.Tidal
             this.tidalApiClient = tidalApiClient;
             this.logger = logger;
         }
-        public async Task<List<string?>> GetTrackArtistNamesAsync(string tidalUrl)
+        public async Task<List<string>?> GetTrackArtistNamesAsync(string tidalUrl)
         {
             var trackId = TidalUrlHelper.ExtractTidalId(tidalUrl, "track");
             var reqUrl = $"{tidalApiUrl}/tracks/{trackId}/relationships/artists?countryCode=US&include=tracks";

@@ -70,10 +70,11 @@ namespace Stream_Linkify_Backend.Tests
 
             var exampleAlbum = "https://open.spotify.com/album/27teXombBxDGNa9f5jtOr2?si=R6dKhp2MSc-jKFirPkZzLA";
 
-            var album = await albumService.GetByUrlAsync(exampleAlbum);
+            var (upc, albumName, artistNames) = await albumService.GetByUrlAsync(exampleAlbum);
 
-            Assert.NotNull(album);
-            Assert.False(string.IsNullOrWhiteSpace(album!.Name));
+            Assert.NotNull(upc);
+            Assert.NotNull(albumName);
+            Assert.NotNull(artistNames);
         }
 
         [Fact]
@@ -85,17 +86,9 @@ namespace Stream_Linkify_Backend.Tests
             var exampleAlbumLink = "https://open.spotify.com/album/0lEU44IEBoEONvqDU8hEHc";
             var exampleAlbumId = SpotifyUrlHelper.ExtractSpotifyId(exampleAlbumLink, "album");
 
-            SpotifySearchResponseDto? albumResponse = await albumService.GetByUpcAsync(exampleAlbumUpc);
+            string? albumResponseLink = await albumService.GetUrlByUpcAsync(exampleAlbumUpc);
 
-            Assert.NotNull(albumResponse);
-            Assert.NotNull(albumResponse.Albums);
-
-            var albumId = albumResponse.Albums.Items.FirstOrDefault()?.Id;
-            var albumLink = albumResponse.Albums.Items.FirstOrDefault()?.ExternalUrls.Spotify;
-
-            Assert.NotNull(albumId);
-            Assert.Equal(exampleAlbumId, albumId);
-            Assert.Equal(exampleAlbumLink, albumLink);
+            Assert.Equal(exampleAlbumLink, albumResponseLink);
         }
     }
 }

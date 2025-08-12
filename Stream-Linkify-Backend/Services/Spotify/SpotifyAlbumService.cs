@@ -18,7 +18,7 @@ namespace Stream_Linkify_Backend.Services.Spotify
             this.spotifyApiClient = spotifyApiClient;
             this.logger = logger;
         }
-        public async Task<(string? UPC, string? albumName, List<string>? artistNames)?> GetByUrlAsync(string spotifyUrl)
+        public async Task<(string? UPC, string? albumName, List<string>? artistNames)> GetByUrlAsync(string spotifyUrl)
         {
             var albumID = SpotifyUrlHelper.ExtractSpotifyId(spotifyUrl, "album");
             var reqUrl = $"{spotifyApiUrl}/albums/{albumID}";

@@ -45,21 +45,12 @@ namespace Stream_Linkify_Backend.Services.Spotify
                 AlbumName = spotifyTrack.Album.Name
             };
 
-            // Get AppleMusic track by ISRC
-            var appleTrack = await appleTrackService.GetTrackByIsrcAsync(result.ISRC!);
+            // Get AppleMusic url by ISRC
+            var appleTrackUrl = await appleTrackService.GetTrackUrlByIsrcAsync(result.ISRC!);
+            result.AppleMusicUrl = appleTrackUrl;
 
-            if (appleTrack == null)
-            {
-                logger.LogWarning("No Apple Music track found for ISRC {ISRC}", result.ISRC);
-                result.AppleMusicUrl = null;
-            }
-            else
-            {
-                result.AppleMusicUrl = appleTrack.Attributes.Url;
-            }
-
-            // Get Tidal Track from artist, track title, isrc
-            var tidalUrl = await tidalTrackService.GetTrackUrlByNameAsync(result.SongName, result.AritstNames.FirstOrDefault(), result.ISRC!);
+            // Get Tidal url from artist, track title, isrc
+            var tidalUrl = await tidalTrackService.GetTrackUrlByNameAsync(result.SongName, result.AritstNames.FirstOrDefault()!, result.ISRC!);
             result.TidalUrl = tidalUrl;
 
             return result.ToReturnDo();
