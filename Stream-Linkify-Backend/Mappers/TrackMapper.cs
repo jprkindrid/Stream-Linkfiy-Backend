@@ -12,9 +12,9 @@ namespace Stream_Linkify_Backend.Mappers
                 ArtistNames = track.AritstNames,
                 SongName = track.SongName,
                 AlbumName = track.AlbumName,
-                SpotifyUrl = track.SpotifyUrl,
-                AppleMusicUrl = track.AppleMusicUrl,
-                TidalUrl = track.TidalUrl
+                Spotify = track.SpotifyUrl,
+                AppleMusic = track.AppleMusicUrl,
+                Tidal = track.TidalUrl
             };
         }
     }
