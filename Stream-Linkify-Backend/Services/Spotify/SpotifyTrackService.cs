@@ -30,7 +30,7 @@ namespace Stream_Linkify_Backend.Services.Spotify
         public async Task<SpotifySearchResponseDto?> GetByIsrcAsync(string isrc)
         {
             var query = $"isrc:{isrc}";
-            var reqUrl = $"{spotifyApiUrl}/search/?q={Uri.EscapeDataString(query)}&type=track";
+            var reqUrl = $"{spotifyApiUrl}/search/?q={Uri.EscapeDataString(query)}&type=track%2Calbum";
 
             var result = await spotifyApiClient.SendSpotifyRequestAsync<SpotifySearchResponseDto>(reqUrl);
 

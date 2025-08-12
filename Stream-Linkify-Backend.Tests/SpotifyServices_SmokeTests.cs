@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Stream_Linkify_Backend.DTOs.Spotify;
+using Stream_Linkify_Backend.Helpers.URLs;
 using Stream_Linkify_Backend.Interfaces.Spotify;
 using Stream_Linkify_Backend.Services.Spotify;
 using System.Threading.Tasks;
@@ -8,11 +10,11 @@ using Xunit;
 
 namespace Stream_Linkify_Backend.Tests
 {
-    public class SpotifyTokenService_SmokeTests
+    public class SpotifyServices_SmokeTests
     {
         private readonly ServiceProvider _serviceProvider;
 
-        public SpotifyTokenService_SmokeTests()
+        public SpotifyServices_SmokeTests()
         {
             var services = new ServiceCollection();
 
@@ -22,7 +24,7 @@ namespace Stream_Linkify_Backend.Tests
 
             // Config from user-secrets + env vars
             var config = new ConfigurationBuilder()
-                .AddUserSecrets<SpotifyTokenService_SmokeTests>(optional: true)
+                .AddUserSecrets<SpotifyServices_SmokeTests>(optional: true)
                 .AddEnvironmentVariables()
                 .Build();
 
@@ -72,6 +74,28 @@ namespace Stream_Linkify_Backend.Tests
 
             Assert.NotNull(album);
             Assert.False(string.IsNullOrWhiteSpace(album!.Name));
+        }
+
+        [Fact]
+        public async Task GetAlbumByUpcAsync_ReturnsCorrectAlbum()
+        {
+            var albumService = _serviceProvider.GetRequiredService<ISpotifyAlbumService>();
+
+            var exampleAlbumUpc = "199257088807"; // Kindrid - Inertia of Solitude
+            var exampleAlbumLink = "https://open.spotify.com/album/0lEU44IEBoEONvqDU8hEHc";
+            var exampleAlbumId = SpotifyUrlHelper.ExtractSpotifyId(exampleAlbumLink, "album");
+
+            SpotifySearchResponseDto? albumResponse = await albumService.GetByUpcAsync(exampleAlbumUpc);
+
+            Assert.NotNull(albumResponse);
+            Assert.NotNull(albumResponse.Albums);
+
+            var albumId = albumResponse.Albums.Items.FirstOrDefault()?.Id;
+            var albumLink = albumResponse.Albums.Items.FirstOrDefault()?.ExternalUrls.Spotify;
+
+            Assert.NotNull(albumId);
+            Assert.Equal(exampleAlbumId, albumId);
+            Assert.Equal(exampleAlbumLink, albumLink);
         }
     }
 }
