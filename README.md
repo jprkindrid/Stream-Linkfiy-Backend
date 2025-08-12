@@ -112,7 +112,7 @@ TIDAL:
 - Requires Tidal developer Account.
 - [Read about acceessing TIDAL developer credentials here](https://developer.tidal.com/documentation/api-sdk/api-sdk-quick-start)
 
-### IMPORTANT: Remove Committed Private Keys
+### IMPORTANT: Do not commit Private Keys
 The repository currently contains `.p8` Apple private key files under:
 - `Stream-Linkify-Backend/Keys/AuthKey_<KeyId>.p8`
 - `Stream-Linkify-Backend.Tests/Keys/AuthKey_<KeyId>.p8`
@@ -156,8 +156,8 @@ Inject runtime secrets using `-e` flags or a Docker secret management solution.
 - Robust error envelope + problem details.
 - Replace ad-hoc provider parsing with a pluggable strategy registry.
 - Add caching (e.g., MemoryCache / Redis) for tokens + track metadata.
+- Add database for existing searched tracks, call tracks from db first.
 - Additional providers (YouTube Music, Deezer, SoundCloud – contingent on API feasibility).
-- Batch endpoint for multiple track URLs in one request.
 - OpenTelemetry instrumentation (traces / metrics) + structured logging enrichment.
 - Rate limiting / resiliency policies (Polly) around provider calls.
 - CI workflow (build, test, security scan) + container publish.
