@@ -47,30 +47,13 @@ namespace Stream_Linkify_Backend.Services.Apple
             result.ISRC = appleTrack.Attributes.Isrc;
 
             // Get Spotify Track from ISRC
-            var spotifyTrack = await spotifyTrackService.GetByIsrcAsync(result.ISRC);
+            var (spotifyTrackUrl, spotifyAlbumName, spotifyArtistNames) = await spotifyTrackService.GetByIsrcAsync(result.ISRC);
+            result.SpotifyUrl = spotifyTrackUrl;
+            if (spotifyAlbumName != null)
+                result.AlbumName = spotifyAlbumName;
 
-            if (spotifyTrack == null)
-            {
-                logger.LogWarning("No result found on Spotify for ISRC {ISRC}", result.ISRC);
-                result.SpotifyUrl = null;
-            }
-            else
-            {
-                var firstTrack = spotifyTrack?.Tracks?.Items?
-                    .FirstOrDefault(t => string.Equals(t.Type, "track", StringComparison.OrdinalIgnoreCase));
-
-                if (firstTrack != null)
-                {
-                    result.SpotifyUrl = $"https://open.spotify.com/track/{firstTrack.Id}";
-                    result.AritstNames = [.. firstTrack.Artists.Select(a => a.Name)];
-                    result.AlbumName = firstTrack.Album.Name;
-                }
-                else
-                {
-                    logger.LogWarning("No track item found in Spotify search results for ISRC {ISRC}", result.ISRC);
-                    result.SpotifyUrl = null;
-                }
-            }
+            if (spotifyArtistNames != null)
+                result.AritstNames = spotifyArtistNames;
 
             // Get Tidal Track from artist, track title, isrc
             var tidalUrl = await tidalTrackService.GetTrackUrlByNameAsync(result.SongName, result.AritstNames.First(), result.ISRC);

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Linq;
 using Stream_Linkify_Backend.DTOs.Spotify;
 using Stream_Linkify_Backend.Helpers.URLs;
 using Stream_Linkify_Backend.Interfaces.Spotify;
@@ -9,12 +10,16 @@ namespace Stream_Linkify_Backend.Services.Spotify
     {
         private const string spotifyApiUrl = "https://api.Spotify.com/v1";
         private readonly ISpotifyApiClient spotifyApiClient;
+        private readonly ILogger<SpotifyTrackService> logger;
 
         public SpotifyTrackService(
-            ISpotifyApiClient spotifyApiClient)
+            ISpotifyApiClient spotifyApiClient,
+            ILogger<SpotifyTrackService> logger
+            )
         {
 
             this.spotifyApiClient = spotifyApiClient;
+            this.logger = logger;
         }
         public async Task<SpotifyTrackFullDto?> GetByUrlAsync(string spotifyUrl)
         {
@@ -27,14 +32,29 @@ namespace Stream_Linkify_Backend.Services.Spotify
             return result;
         }
 
-        public async Task<SpotifySearchResponseDto?> GetByIsrcAsync(string isrc)
+        public async Task<(string? url, string? albumName, List<string> artistNames)> GetByIsrcAsync(string isrc)
         {
             var query = $"isrc:{isrc}";
             var reqUrl = $"{spotifyApiUrl}/search/?q={Uri.EscapeDataString(query)}&type=track%2Calbum";
 
-            var result = await spotifyApiClient.SendSpotifyRequestAsync<SpotifySearchResponseDto>(reqUrl);
+            SpotifySearchResponseDto? result = await spotifyApiClient.SendSpotifyRequestAsync<SpotifySearchResponseDto>(reqUrl);
 
-            return result;
+            if (result == null)
+            {
+                logger.LogWarning("Could not get Spotify album by url");
+                return (null, null, []);
+            }
+
+            var trackId = result.Tracks?.Items.FirstOrDefault()?.Id;
+            var url = $"https://open.spotify.com/track/{trackId}";
+
+            var albumName = result.Tracks?.Items?.FirstOrDefault()?.Album?.Name;
+
+            var artistNames = result.Tracks?.Items?.FirstOrDefault()?.Artists.Select(a => a.Name).ToList();
+            if (artistNames == null)
+                return (url, albumName, []);
+
+            return (url, albumName, artistNames);
         }
     }
 }

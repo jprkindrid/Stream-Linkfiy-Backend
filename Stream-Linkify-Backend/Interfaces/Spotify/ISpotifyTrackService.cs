@@ -5,6 +5,6 @@ namespace Stream_Linkify_Backend.Interfaces.Spotify
     public interface ISpotifyTrackService
     {
         Task<SpotifyTrackFullDto?> GetByUrlAsync(string url);
-        Task<SpotifySearchResponseDto?> GetByIsrcAsync(string isrc);
+        Task<(string? url, string? albumName, List<string> artistNames)> GetByIsrcAsync(string isrc);
     }
 }
