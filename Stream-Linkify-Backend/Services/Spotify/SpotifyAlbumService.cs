@@ -30,17 +30,28 @@ namespace Stream_Linkify_Backend.Services.Spotify
                 return null;
             }
 
-            return  result;
+            return result;
         }
 
-        public async Task<string?> GetUrlByUpcAsync(string upc)
+        public async Task<(string? url, List<string>? artistNames)> GetByUpcAsync(string upc)
         {
             var query = $"upc:{upc}";
             var reqUrl = $"{spotifyApiUrl}/search/?q={Uri.EscapeDataString(query)}&type=album";
 
             SpotifySearchResponseDto? result = await spotifyApiClient.SendSpotifyRequestAsync<SpotifySearchResponseDto>(reqUrl);
 
-            return result?.Albums?.Items?.FirstOrDefault()?.ExternalUrls.Spotify;
+            if (result == null)
+            {
+                logger.LogWarning("Could not find Spotify Album with UPC: {upc}", upc);
+                return (null, []);
+            }
+
+            var url = result?.Albums?.Items?.FirstOrDefault()?.ExternalUrls.Spotify;
+            var artistNames = result!.Albums?.Items?.FirstOrDefault()?.Artists.Select(a => a.Name).ToList();
+            if (artistNames == null)
+                return (url, []);
+
+            return (url, artistNames);
         }
 
     }

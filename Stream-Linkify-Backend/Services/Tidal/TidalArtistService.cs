@@ -19,10 +19,23 @@ namespace Stream_Linkify_Backend.Services.Tidal
             this.tidalApiClient = tidalApiClient;
             this.logger = logger;
         }
-        public async Task<List<string>?> GetTrackArtistNamesAsync(string tidalUrl)
+
+        public async Task<List<string>?> GetArtistNamesAsync(string tidalUrl, string itemType)
         {
-            var trackId = TidalUrlHelper.ExtractTidalId(tidalUrl, "track");
-            var reqUrl = $"{tidalApiUrl}/tracks/{trackId}/relationships/artists?countryCode=US&include=tracks";
+            itemType = itemType.ToLowerInvariant();
+            var id = itemType switch
+            {
+                "track" => TidalUrlHelper.ExtractTidalId(tidalUrl, "track"),
+                "album" => TidalUrlHelper.ExtractTidalId(tidalUrl, "album"),
+                _ => throw new InvalidOperationException($"Invalid itemType for tidal.GetArtistNames: {itemType}")
+            };
+
+            var reqUrl = itemType switch
+            {
+                "track" => $"{tidalApiUrl}/tracks/{id}/relationships/artists?countryCode=US&include=tracks",
+                "album" => $"{tidalApiUrl}/albums/{id}/relationships/artists?countryCode=US&include=albums",
+                _ => throw new InvalidOperationException($"Invalid itemType for tidal.GetArtistNames: {itemType}")
+            };
 
             var result = await tidalApiClient.SendTidalRequestAsync<TidalArtistsResponseDto>(reqUrl);
 
