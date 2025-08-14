@@ -37,6 +37,7 @@ namespace Stream_Linkify_Backend.Extensions
             serivces.AddSingleton<ITidalTokenService, TidalTokenService>();
             serivces.AddScoped<ITidalArtistService, TidalArtistService>();
             serivces.AddScoped<ITidalTrackService, TidalTrackService>();
+            serivces.AddScoped<ITidalAlbumService, TidalAlbumService>();
             serivces.AddScoped<ITidalInput, TidalInput>();
 
             return serivces;

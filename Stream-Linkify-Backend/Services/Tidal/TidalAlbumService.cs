@@ -1,10 +1,12 @@
 ﻿using Stream_Linkify_Backend.DTOs.Tidal;
+using Stream_Linkify_Backend.Helpers.URLs;
 using Stream_Linkify_Backend.Interfaces.Tidal;
 
 namespace Stream_Linkify_Backend.Services.Tidal
 {
     public class TidalAlbumService : ITidalAlbumService
     {
+        const string tidalApiUrl = "https://openapi.tidal.com/v2";
         private readonly ITidalApiClient tidalApiClient;
         private readonly ILogger<TidalAlbumService> logger;
 
@@ -18,14 +20,31 @@ namespace Stream_Linkify_Backend.Services.Tidal
         }
 
         // TODO: IMPLEMENT THESE
-        public Task<TidalAlbumData?> GetByUrlAsync(string url)
+        public async Task<TidalAlbumResponseDto?> GetByUrlAsync(string url)
         {
-            throw new NotImplementedException();
+            var albumId = TidalUrlHelper.ExtractTidalId(url, "album");
+            var reqUrl = $"{tidalApiUrl}/albums/{albumId}?countryCode=US&include=artists";
+            var result = await tidalApiClient.SendTidalRequestAsync<TidalAlbumResponseDto>(reqUrl);
+
+            return result;
+
         }
 
-        public Task<string?> GetUrlByUpcAsync(string upc)
+        public async Task<string?> GetUrlByNameAsync(string albumName, string firstArtistName, string upc, string countryCode = "US")
         {
-            throw new NotImplementedException();
+            var query = $"{albumName}-{firstArtistName}";
+            var reqUrl = $"{tidalApiUrl}/searchResults/{Uri.EscapeDataString(query)}?countryCode={countryCode}&include=albums";
+            TidalSearchResponseDto? result = await tidalApiClient.SendTidalRequestAsync<TidalSearchResponseDto>(reqUrl);
+
+            if (result == null || result.Included.Count == 0)
+                return null;
+
+            return result.Included
+                .Select(i => i.DeserializeAttributes<TidalAlbumAttributes>())
+                .Where(a => a != null && string.Equals(a.BarcodeId.Trim(), upc?.Trim(), StringComparison.OrdinalIgnoreCase))
+                .SelectMany(a => a?.ExternalLinks ?? Enumerable.Empty<TidalExternalLink>())
+                .Select(l => l.Href)
+                .FirstOrDefault(href => !string.IsNullOrWhiteSpace(href));
         }
     }
 }

@@ -34,7 +34,7 @@ namespace Stream_Linkify_Backend.Tests
             services.AddSingleton<ITidalTokenService, TidalTokenService>();
             services.AddSingleton<ITidalApiClient, TidalApiClient>();
             services.AddSingleton<ITidalTrackService, TidalTrackService>();
-            //services.AddSingleton<ITidalAlbumService, TidalAlbumService>();
+            services.AddSingleton<ITidalAlbumService, TidalAlbumService>();
 
             _serviceProvider = services.BuildServiceProvider();
         }
@@ -91,18 +91,35 @@ namespace Stream_Linkify_Backend.Tests
             Assert.False(string.IsNullOrWhiteSpace(trackUrl));
         }
 
-        //[Fact]
-        //public async Task GetValidAlbumAsync_ReturnsAlbum()
-        //{
-        //    var albumService = _serviceProvider.GetRequiredService<ITidalAlbumService>();
+        [Fact]
+        public async Task GetValidAlbumAsync_ReturnsAlbum()
+        {
+            var albumService = _serviceProvider.GetRequiredService<ITidalAlbumService>();
 
-        //    // Example TIDAL album URL
-        //    var exampleAlbum = "https://tidal.com/browse/album/445978727";
+            // Example TIDAL album URL
+            var exampleAlbum = "https://tidal.com/browse/album/445978727";
 
-        //    var album = await albumService.GetAlbumByUrlAsync(exampleAlbum);
+            TidalAlbumResponseDto? album = await albumService.GetByUrlAsync(exampleAlbum);
 
-        //    Assert.NotNull(album);
-        //    Assert.False(string.IsNullOrWhiteSpace(album!.Attributes.Title));
-        //}
+            Assert.NotNull(album);
+            Assert.False(string.IsNullOrWhiteSpace(album!.Data.Attributes.Title));
+            Assert.False(String.IsNullOrWhiteSpace(album!.Data.Attributes.BarcodeId));
+            Assert.False(String.IsNullOrWhiteSpace(album!.Data.Attributes.ExternalLinks.FirstOrDefault()?.Href));
+        }
+
+        [Fact]
+        public async Task GetValidAlbumByNameAsync_ReturnsCorrectUrl()
+        {
+            var albumService = _serviceProvider.GetRequiredService<ITidalAlbumService>();
+
+            var testAlbumLink = "https://tidal.com/browse/album/430298609";
+            var testArtist = "Kindrid";
+            var testAlbumName = "Inertia of Solitude";
+            var testUpc = "199257088807";
+
+            var responseUrl = await albumService.GetUrlByNameAsync(testAlbumName, testArtist, testUpc);
+            Assert.NotNull(responseUrl);
+            Assert.Equal(responseUrl, testAlbumLink);
+        }
     }
 }

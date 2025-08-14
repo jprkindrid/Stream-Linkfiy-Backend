@@ -24,16 +24,16 @@ namespace Stream_Linkify_Backend.Services.Tidal
             return result;
         }
 
-        public async Task<string?> GetTrackUrlByNameAsync(string trackName, string artistName, string isrc)
+        public async Task<string?> GetTrackUrlByNameAsync(string trackName, string artistName, string isrc, string countryCode = "US")
         {
-            var query = $"{trackName}-{artistName}";
-            var reqUrl = $"{tidalApiUrl}/searchResults/{Uri.EscapeDataString(query)}?countryCode=US&include=tracks";
+            var query = $"{trackName}-{artistName}?countryCode={countryCode}&include=tracks";
+            var reqUrl = $"{tidalApiUrl}/searchResults/{Uri.EscapeDataString(query)}";
 
-            TidalSearchResponseDto? resp = await tidalApiClient.SendTidalRequestAsync<TidalSearchResponseDto>(reqUrl);
-            if (resp == null || resp.Included.Count == 0)
+            TidalSearchResponseDto? result = await tidalApiClient.SendTidalRequestAsync<TidalSearchResponseDto>(reqUrl);
+            if (result == null || result.Included.Count == 0)
                 return null;
 
-            return resp.Included
+            return result.Included
                 .Select(i => i.DeserializeAttributes<TidalTrackAttributes>())
                 .Where(a => a != null && string.Equals(a.Isrc?.Trim(), isrc?.Trim(), StringComparison.OrdinalIgnoreCase))
                 .SelectMany(a => a?.ExternalLinks ?? Enumerable.Empty<TidalExternalLink>())
