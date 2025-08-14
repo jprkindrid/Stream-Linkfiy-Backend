@@ -90,7 +90,7 @@ namespace Stream_Linkify_Backend.Tests
             var exampleAlbumLink = "https://open.spotify.com/album/0lEU44IEBoEONvqDU8hEHc";
             var exampleAlbumId = SpotifyUrlHelper.ExtractSpotifyId(exampleAlbumLink, "album");
 
-            string? albumResponseLink = await albumService.GetUrlByUpcAsync(exampleAlbumUpc);
+            var(albumResponseLink, _) = await albumService.GetByUpcAsync(exampleAlbumUpc);
 
             Assert.Equal(exampleAlbumLink, albumResponseLink);
         }

@@ -103,8 +103,8 @@ namespace Stream_Linkify_Backend.Tests
 
             Assert.NotNull(album);
             Assert.False(string.IsNullOrWhiteSpace(album!.Data.Attributes.Title));
-            Assert.False(String.IsNullOrWhiteSpace(album!.Data.Attributes.BarcodeId));
-            Assert.False(String.IsNullOrWhiteSpace(album!.Data.Attributes.ExternalLinks.FirstOrDefault()?.Href));
+            Assert.False(string.IsNullOrWhiteSpace(album!.Data.Attributes.BarcodeId));
+            Assert.False(string.IsNullOrWhiteSpace(album!.Data.Attributes.ExternalLinks.FirstOrDefault()?.Href));
         }
 
         [Fact]

@@ -69,7 +69,7 @@ namespace Stream_Linkify_Backend.Controllers
 
             try
             {
-                TrackReturnDto? resultTrack = uri.Host.ToLowerInvariant() switch
+                AlbumReturnDto? resultTrack = uri.Host.ToLowerInvariant() switch
                 {
                     "open.spotify.com" => await spotifyInput.GetAlbumUrlsAsync(request.AlbumUrl),
                     "music.apple.com" => await appleInput.GetAlbumUrlsAsync(request.AlbumUrl),

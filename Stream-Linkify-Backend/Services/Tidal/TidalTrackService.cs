@@ -26,8 +26,8 @@ namespace Stream_Linkify_Backend.Services.Tidal
 
         public async Task<string?> GetTrackUrlByNameAsync(string trackName, string artistName, string isrc, string countryCode = "US")
         {
-            var query = $"{trackName}-{artistName}?countryCode={countryCode}&include=tracks";
-            var reqUrl = $"{tidalApiUrl}/searchResults/{Uri.EscapeDataString(query)}";
+            var query = $"{trackName}-{artistName}";
+            var reqUrl = $"{tidalApiUrl}/searchResults/{Uri.EscapeDataString(query)}?countryCode={countryCode}&include=tracks";
 
             TidalSearchResponseDto? result = await tidalApiClient.SendTidalRequestAsync<TidalSearchResponseDto>(reqUrl);
             if (result == null || result.Included.Count == 0)
