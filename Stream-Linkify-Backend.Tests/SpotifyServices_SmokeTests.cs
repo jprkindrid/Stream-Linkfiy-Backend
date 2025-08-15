@@ -88,7 +88,6 @@ namespace Stream_Linkify_Backend.Tests
 
             var exampleAlbumUpc = "199257088807"; // Kindrid - Inertia of Solitude
             var exampleAlbumLink = "https://open.spotify.com/album/0lEU44IEBoEONvqDU8hEHc";
-            var exampleAlbumId = SpotifyUrlHelper.ExtractSpotifyId(exampleAlbumLink, "album");
 
             var(albumResponseLink, _) = await albumService.GetByUpcAsync(exampleAlbumUpc);
 

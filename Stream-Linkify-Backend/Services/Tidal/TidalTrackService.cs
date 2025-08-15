@@ -33,12 +33,17 @@ namespace Stream_Linkify_Backend.Services.Tidal
             if (result == null || result.Included.Count == 0)
                 return null;
 
-            return result.Included
+            var browseUrl = result.Included
                 .Select(i => i.DeserializeAttributes<TidalTrackAttributes>())
                 .Where(a => a != null && string.Equals(a.Isrc?.Trim(), isrc?.Trim(), StringComparison.OrdinalIgnoreCase))
                 .SelectMany(a => a?.ExternalLinks ?? Enumerable.Empty<TidalExternalLink>())
                 .Select(l => l.Href)
                 .FirstOrDefault(href => !string.IsNullOrWhiteSpace(href));
+
+            if (browseUrl == null) return null;
+
+            var trackId = TidalUrlHelper.ExtractTidalId(browseUrl, "track");
+            return $"https://listen.tidal.com/track/{trackId}";
         }
     }
 }

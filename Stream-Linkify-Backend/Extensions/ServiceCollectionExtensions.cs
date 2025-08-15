@@ -26,6 +26,7 @@ namespace Stream_Linkify_Backend.Extensions
             services.AddSingleton<IAppleApiClient, AppleApiClient>();
             services.AddSingleton<IAppleTokenService, AppleTokenService>();
             services.AddScoped<IAppleTrackService, AppleTrackService>();
+            services.AddScoped<IAppleAlbumService, AppleAlbumService>();
             services.AddScoped<IAppleInput, AppleInput>();
 
             return services;

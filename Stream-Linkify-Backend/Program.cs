@@ -21,6 +21,7 @@ builder.Services.AddControllers()
 
 
 // created services
+builder.Services.AddScoped<IMusicServiceFactory, MusicServiceFactory>();
 builder.Services.AddHttpClient();
 builder.Services.AddSpotifyServices();
 builder.Services.AddAppleServices();
