@@ -34,7 +34,7 @@ namespace Stream_Linkify_Backend.Services.Tidal
             };
 
             // Spotify
-            var (spotifyUrl, spotifyArtistNames) = await musicServices.SpotifyAlbum.GetByUpcAsync(result.UPC);
+            var (spotifyUrl, spotifyArtistNames) = await musicServices.SpotifyAlbum.GetByNameAsync(result.UPC, result.AlbumName, result.AritstNames[0]);
             result.SpotifyUrl = spotifyUrl;
             if (result.AppleMusicUrl == null)
                 logger.LogWarning("Spotify URL not found for UPC {UPC}", result.UPC);
@@ -43,7 +43,7 @@ namespace Stream_Linkify_Backend.Services.Tidal
                 result.AritstNames = spotifyArtistNames;
 
             // Apple
-            result.AppleMusicUrl = await musicServices.AppleAlbum.GetUrlByUpcAsync(result.UPC);
+            result.AppleMusicUrl = await musicServices.AppleAlbum.GetUrlByNameAsync(result.UPC, result.AlbumName, result.AritstNames[0]);
             if (result.AppleMusicUrl == null)
                 logger.LogWarning("Apple Music URL not found for UPC {UPC}", result.UPC);
 

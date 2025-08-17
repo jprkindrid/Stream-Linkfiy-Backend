@@ -6,6 +6,7 @@ namespace Stream_Linkify_Backend.Services.Apple
 {
     public class AppleAlbumService : IAppleAlbumService
     {
+        private const string appleMusicApiUrl = "https://api.music.apple.com/v1";
         private readonly IAppleApiClient appleApiClient;
         private readonly ILogger<IAppleAlbumService> logger;
 
@@ -20,7 +21,7 @@ namespace Stream_Linkify_Backend.Services.Apple
         public async Task<AppleAlbumDataDto?> GetByUrlAsync(string appleUrl)
         {
             var (region, albumId, _) = AppleUrlHelper.ExtractAppleAlbumIdAndRegion(appleUrl);
-            var reqUrl = $"https://api.music.apple.com/v1/catalog/{region}/albums/{albumId}";
+            var reqUrl = $"{appleMusicApiUrl}/catalog/{region}/albums/{albumId}";
             var result = await appleApiClient.SendAppleRequestAsync<AppleAlbumResponseDto>(reqUrl);
             if (result == null || result.Data.Count == 0)
             {
@@ -31,23 +32,40 @@ namespace Stream_Linkify_Backend.Services.Apple
             return result.Data[0];
         }
 
-        public async Task<string?> GetUrlByUpcAsync(string upc)
+        public async Task<string?> GetUrlByNameAsync(string upc, string albumName, string artistName)
         {
-            var reqUrl = $"https://api.music.apple.com/v1/catalog/us/albums?filter[upc]={upc}";
+            var reqUrl = $"{appleMusicApiUrl}/catalog/us/albums?filter[upc]={upc}";
             var result = await appleApiClient.SendAppleRequestAsync<AppleAlbumResponseDto>(reqUrl);
-            if (result == null || result.Data.Count == 0)
+            if (result != null && result.Data.Count != 0)
             {
-                logger.LogWarning("Unable to get Apple Music with UPC '{upc}'", upc);
+                if ((string.Equals(upc, result?.Data[0].Attributes.Upc, StringComparison.OrdinalIgnoreCase)))
+                    return result?.Data[0].Attributes.Url;
+            }
+            logger.LogWarning("Unable to get Apple Music with UPC '{upc}'", upc);
+
+            var query = $"{albumName} {artistName}";
+
+            reqUrl = $"{appleMusicApiUrl}/catalog/us/search?types=albums&term={Uri.EscapeDataString(query)}";
+            var searchResult = await appleApiClient.SendAppleRequestAsync<AppleSearchResponseDto>(reqUrl);
+
+            if (searchResult == null || searchResult.Results.Albums == null || searchResult.Results.Albums.Data.Count == 0)
+            {
+                logger.LogWarning("No Apple Music search result for album {albumName} and artist {artistName}", albumName, artistName);
                 return null;
             }
 
-            if (!(string.Equals(upc, result.Data[0].Attributes.Upc, StringComparison.OrdinalIgnoreCase)))
+            foreach (var album in searchResult.Results.Albums.Data)
             {
-                logger.LogWarning("Apple Music request for album with UPC '{upc}' returned incorrect album", upc);
-                return null;
+                if (album.Attributes.Name == albumName && album.Attributes.ArtistName == artistName)
+                    return album.Attributes.Url;
             }
 
-            return result.Data[0].Attributes.Url;
+            logger.LogWarning("No Apple Music search result for album {albumName} and artist {artistName}", albumName, artistName);
+
+
+            return null;
+
+
         }
     }
 }

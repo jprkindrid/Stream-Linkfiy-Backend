@@ -49,15 +49,20 @@ namespace Stream_Linkify_Backend.Services.Tidal
 
             logger.LogWarning("Could not get TIDAL track for isrc '{isrc}' with title {trackName}", isrc, trackName);
 
-            foreach (var includedTrack in result.Included)
+            // This isnt as accurate but I can't check for artists without calling a seperate
+            // endpoint for the artists (in the TidalArtistService) which results in 20-50
+            // extra calls and I will inevitably be rate limited so this is the solution
+            // until TIDAL returns artist names with their track/album response.
+
+            var firstTrack = result.Included.FirstOrDefault();
+            
+            if (firstTrack == null)
             {
-                var url = $"https://listen.tidal.com/track/{includedTrack.Id}";
-                var artistNames = await tidalArtistService.GetArtistNamesAsync(url, "track");
-                if (artistNames != null && artistNames.Contains(artistName))
-                    return url;
+                logger.LogWarning("No TIDAL search results for track {trackName} with artist {artistName}", trackName, artistName);
+                return null;
             }
 
-            return null;
+            return $"https://listen.tidal.com/track/{firstTrack.Id}";;
         }
     }
 }

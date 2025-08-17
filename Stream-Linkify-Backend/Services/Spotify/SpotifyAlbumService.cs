@@ -33,25 +33,49 @@ namespace Stream_Linkify_Backend.Services.Spotify
             return result;
         }
 
-        public async Task<(string? url, List<string>? artistNames)> GetByUpcAsync(string upc)
+        public async Task<(string? url, List<string>? artistNames)> GetByNameAsync(string upc, string albumName, string artistName)
         {
             var query = $"upc:{upc}";
             var reqUrl = $"{spotifyApiUrl}/search/?q={Uri.EscapeDataString(query)}&type=album";
 
             SpotifySearchResponseDto? result = await spotifyApiClient.SendSpotifyRequestAsync<SpotifySearchResponseDto>(reqUrl);
 
-            if (result == null)
+            if (result != null && result.Albums?.Items.Count != 0)
             {
-                logger.LogWarning("Could not find Spotify Album with UPC: {upc}", upc);
+                var url = result?.Albums?.Items?.FirstOrDefault()?.ExternalUrls.Spotify;
+                var artistNames = result!.Albums?.Items?.FirstOrDefault()?.Artists.Select(a => a.Name).ToList();
+                if (artistNames == null)
+                    return (url, []);
+
+                return (url, artistNames);
+            }
+
+            logger.LogWarning("Could not find Spotify Album with UPC: {upc}", upc);
+
+            query = $"album:{albumName} artist:{artistName}";
+            reqUrl = $"{spotifyApiUrl}/search?q={Uri.EscapeDataString(query)}&type=album&market=US";
+
+            result = await spotifyApiClient.SendSpotifyRequestAsync<SpotifySearchResponseDto>(reqUrl);
+
+            if (result == null || result.Albums == null || result.Albums?.Items.Count == 0)
+            {
+                logger.LogWarning("No Spotify result for search with album '{albumName}' and artist '{artistName}'", albumName, artistName);
                 return (null, []);
             }
 
-            var url = result?.Albums?.Items?.FirstOrDefault()?.ExternalUrls.Spotify;
-            var artistNames = result!.Albums?.Items?.FirstOrDefault()?.Artists.Select(a => a.Name).ToList();
-            if (artistNames == null)
-                return (url, []);
+            foreach (var album in result.Albums!.Items)
+            {
+                if (album.Name.Contains(albumName, StringComparison.OrdinalIgnoreCase) &&
+                    album.Artists.Any(a => string.Equals(a.Name, artistName, StringComparison.OrdinalIgnoreCase)))
+                {
+                    return (album.ExternalUrls.Spotify, album.Artists.Select(a => a.Name).ToList());
+                }
+            }
 
-            return (url, artistNames);
+            logger.LogWarning("No Spotify result for search with album '{albumName}' and artist '{artistName}'", albumName, artistName);
+
+            return (null, []);
+
         }
 
     }

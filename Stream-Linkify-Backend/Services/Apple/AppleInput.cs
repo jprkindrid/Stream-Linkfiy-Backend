@@ -30,7 +30,7 @@ namespace Stream_Linkify_Backend.Services.Apple
 
             // Spotify
 
-            var (spotifyAlbumUrl, spotifyArtistNames) = await musicServices.SpotifyAlbum.GetByUpcAsync(result.UPC);
+            var (spotifyAlbumUrl, spotifyArtistNames) = await musicServices.SpotifyAlbum.GetByNameAsync(result.UPC, result.AlbumName, result.AritstNames[0]);
             result.SpotifyUrl = spotifyAlbumUrl;
             if (result.SpotifyUrl == null)
                 logger.LogWarning("Spotify URL not found for UPC {UPC}", result.UPC);

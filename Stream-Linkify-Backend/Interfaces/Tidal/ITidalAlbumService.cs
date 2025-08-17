@@ -6,6 +6,6 @@ namespace Stream_Linkify_Backend.Interfaces.Tidal
     public interface ITidalAlbumService
     {
         Task<TidalAlbumResponseDto?> GetByUrlAsync(string url);
-        Task<string?> GetUrlByNameAsync(string albumName, string firstArtistName, string upc, string countryCode = "US");
+        Task<string?> GetUrlByNameAsync(string albumName, string firstArtistName, string upc);
     }
 }

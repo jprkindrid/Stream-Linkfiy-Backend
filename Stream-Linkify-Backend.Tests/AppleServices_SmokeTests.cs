@@ -133,7 +133,7 @@ namespace Stream_Linkify_Backend.Tests
             var exampleAlbumUpc = "199257088807"; // Kindrid - Inertia of Solitude
             var exampleAlbumLink = "https://music.apple.com/us/album/inertia-of-solitude/1808747512";
 
-            var responseUrl = await albumService!.GetUrlByUpcAsync(exampleAlbumUpc);
+            var responseUrl = await albumService!.GetUrlByNameAsync(exampleAlbumUpc, "Inertia of Solitude", "Kindrid");
             Assert.NotNull(responseUrl);
 
             Assert.Equal(responseUrl, exampleAlbumLink);

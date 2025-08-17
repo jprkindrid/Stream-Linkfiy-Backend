@@ -29,7 +29,7 @@ namespace Stream_Linkify_Backend.Services.Spotify
             };
 
             // Apple
-            result.AppleMusicUrl = await musicServices.AppleAlbum.GetUrlByUpcAsync(result.UPC!);
+            result.AppleMusicUrl = await musicServices.AppleAlbum.GetUrlByNameAsync(result.UPC!, result.AlbumName, result.AritstNames[0]);
             if (result.AppleMusicUrl == null)
                 logger.LogWarning("Apple Music URL not found for UPC {UPC}", result.UPC);
 

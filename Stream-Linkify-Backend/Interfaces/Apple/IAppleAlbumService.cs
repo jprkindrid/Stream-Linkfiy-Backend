@@ -5,6 +5,6 @@ namespace Stream_Linkify_Backend.Interfaces.Apple
     public interface IAppleAlbumService
     {
         Task<AppleAlbumDataDto?> GetByUrlAsync(string url);
-        Task<string?> GetUrlByUpcAsync(string upc);
+        Task<string?> GetUrlByNameAsync(string upc, string albumName, string artistName);
     }
 }
