@@ -58,7 +58,7 @@ namespace Stream_Linkify_Backend.Services.Spotify
             };
 
             // Get AppleMusic url by ISRC
-            result.AppleMusicUrl = await musicServices.AppleTrack.GetTrackUrlByIsrcAsync(result.ISRC!);
+            result.AppleMusicUrl = await musicServices.AppleTrack.GetTrackUrlByNameAsync(result.ISRC!, result.SongName, result.AritstNames[0]);
             if (result.AppleMusicUrl == null)
                 logger.LogWarning("Apple Music URL not found for ISRC {ISRC}", result.ISRC);
 

@@ -8,6 +8,7 @@ namespace Stream_Linkify_Backend.Services.Apple
 {
     public class AppleTrackService : IAppleTrackService
     {
+        private const string appleMusicApiUrl = "https://api.music.apple.com/v1";
         private readonly IAppleApiClient appleApiClient;
         private readonly ILogger<AppleTrackService> logger;
 
@@ -35,22 +36,39 @@ namespace Stream_Linkify_Backend.Services.Apple
             return result.Data.FirstOrDefault();
 
         }
-        public async Task<string?> GetTrackUrlByNameASync(string isrc, string trackName, string artistName)
+        public async Task<string?> GetTrackUrlByNameAsync(string isrc, string trackName, string artistName)
         {
-            var reqUrl = $"https://api.music.apple.com/v1/catalog/us/songs?filter[isrc]={isrc}";
+            var reqUrl = $"{appleMusicApiUrl}/catalog/us/songs?filter[isrc]={isrc}";
 
             var result = await appleApiClient.SendAppleRequestAsync<AppleSongResponse>(reqUrl);
 
-            if (result == null || result.Data == null || result.Data.Count == 0)
+            if (result != null && result.Data != null && result.Data.Count != 0)
             {
-                logger.LogWarning("Apple API returned no data for {Url}", reqUrl);
-                logger.LogWarning("Could not get Apple Music track for isrc '{isrc}' with name '{trackName}'", isrc, trackName);
+                
+                return result?.Data?.FirstOrDefault()?.Attributes.Url;
+            }
+
+            logger.LogWarning("Could not get Apple Music track for isrc '{isrc}' with name '{trackName}'", isrc, trackName);
+
+            var query = $"{trackName} {artistName}";
+
+            reqUrl = $"{appleMusicApiUrl}/catalog/us/search?types=songs&term={Uri.EscapeDataString(query)}";
+            var searchResult = await appleApiClient.SendAppleRequestAsync<AppleSearchResponseDto>(reqUrl);
+
+            if (searchResult == null || searchResult.Results.Songs == null || searchResult.Results.Songs.Data.Count == 0)
+            {
+                logger.LogWarning("No Apple Music search result for track {trackName} and artist {artistName}", trackName, artistName);
                 return null;
             }
 
-            return result?.Data?.FirstOrDefault()?.Attributes.Url;
+            foreach (var song in searchResult.Results.Songs.Data)
+            {
+                if (song.Attributes.Name == trackName && song.Attributes.ArtistName == artistName)
+                    return song.Attributes.Url;
+            }
+
+            logger.LogWarning("No Apple Music search result for track {trackName} and artist {artistName}", trackName, artistName);
+            return null;
         }
-
-
     }
 }

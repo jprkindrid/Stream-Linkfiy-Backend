@@ -108,7 +108,7 @@ namespace Stream_Linkify_Backend.Tests
 
             var testIsrc = "GBRKQ2482423";
 
-            var track = await trackService.GetTrackUrlByIsrcAsync(testIsrc);
+            var track = await trackService.GetTrackUrlByNameAsync(testIsrc, "", "");
 
             Assert.NotNull(track);
         }
