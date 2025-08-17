@@ -47,6 +47,8 @@ namespace Stream_Linkify_Backend.Services.Tidal
                 return $"https://listen.tidal.com/track/{trackId}";
             }
 
+            logger.LogWarning("Could not get TIDAL track for isrc '{isrc}' with title {trackName}", isrc, trackName);
+
             foreach (var includedTrack in result.Included)
             {
                 var url = $"https://listen.tidal.com/track/{includedTrack.Id}";

@@ -35,7 +35,7 @@ namespace Stream_Linkify_Backend.Services.Apple
             return result.Data.FirstOrDefault();
 
         }
-        public async Task<string?> GetTrackUrlByIsrcAsync(string isrc)
+        public async Task<string?> GetTrackUrlByNameASync(string isrc, string trackName, string artistName)
         {
             var reqUrl = $"https://api.music.apple.com/v1/catalog/us/songs?filter[isrc]={isrc}";
 
@@ -44,7 +44,7 @@ namespace Stream_Linkify_Backend.Services.Apple
             if (result == null || result.Data == null || result.Data.Count == 0)
             {
                 logger.LogWarning("Apple API returned no data for {Url}", reqUrl);
-                logger.LogWarning("Could not get Apple Music track for isrc {isrc}", isrc);
+                logger.LogWarning("Could not get Apple Music track for isrc '{isrc}' with name '{trackName}'", isrc, trackName);
                 return null;
             }
 

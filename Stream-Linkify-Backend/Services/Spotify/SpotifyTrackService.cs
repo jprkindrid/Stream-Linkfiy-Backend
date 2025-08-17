@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using Stream_Linkify_Backend.DTOs.Spotify;
 using Stream_Linkify_Backend.Helpers.URLs;
 using Stream_Linkify_Backend.Interfaces.Spotify;
+using System;
 
 namespace Stream_Linkify_Backend.Services.Spotify
 {
@@ -34,11 +35,11 @@ namespace Stream_Linkify_Backend.Services.Spotify
         public async Task<(string? url, string? albumName, List<string> artistNames)> GetByNameAsync(string isrc, string trackName, string artistName)
         {
             var query = $"isrc:{isrc}";
-            var reqUrl = $"{spotifyApiUrl}/search/?q={Uri.EscapeDataString(query)}&type=track%2Calbum";
+            var reqUrl = $"{spotifyApiUrl}/search?q={Uri.EscapeDataString(query)}&type=track%2Calbum";
 
             SpotifySearchResponseDto? result = await spotifyApiClient.SendSpotifyRequestAsync<SpotifySearchResponseDto>(reqUrl);
 
-            if (result != null)
+            if (result?.Tracks != null && result.Tracks.Items.Count != 0)
             {
                 var trackId = result.Tracks?.Items.FirstOrDefault()?.Id;
                 var url = $"https://open.spotify.com/track/{trackId}";
@@ -52,25 +53,37 @@ namespace Stream_Linkify_Backend.Services.Spotify
                 return (url, albumName, artistNames);
             }
 
-            logger.LogWarning("Could not get Spotify track for isrc '{isrc}'", isrc);
+            logger.LogWarning("Could not get Spotify track for isrc '{isrc}' with title '{trackName}'", isrc, trackName);
+
+            query = $"track:{trackName} artist:{artistName}";
+            reqUrl =$"{spotifyApiUrl}/search?q={Uri.EscapeDataString(query)}&type=track%2Calbum&market=US";
+
+            result = await spotifyApiClient.SendSpotifyRequestAsync<SpotifySearchResponseDto>(reqUrl);
+
+            if (result == null || result.Tracks == null)
+            {
+                logger.LogWarning("Coult not get Spotify track with name {trackName} and first artist name {artistName}", trackName, artistName);
+                return (null, null, []);
+            }
+
+            foreach (var track in result.Tracks.Items)
+            {
+                if (track.Name == trackName && track.Artists.Select(a => a.Name).Contains(artistName))
+                {
+                    var trackId = track.Id;
+                    var url = $"https://open.spotify.com/track/{track.Id}";
+
+                    var albumName = track.Album.Name;
+
+                    var artistNames = track.Artists.Select(a => a.Name).ToList();
+                    if (artistNames == null)
+                        return (url, albumName, []);
+
+                    return (url, albumName, artistNames);
+                }
+            }
 
             return (null, null, []);
-
-            //    query = $"{trackName}-{artistName}";
-            //    reqUrl = 
-
-
-
-            //    if (!string.IsNullOrWhiteSpace(trackId))
-            //        return (url, albumName, artistNames);
-
-
-
-
-
-
-
-            //    return (url, albumName, artistNames);
         }
     }
 }
