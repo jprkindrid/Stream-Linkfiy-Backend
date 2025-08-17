@@ -25,7 +25,7 @@ namespace Stream_Linkify_Backend.Services.Apple
                 UPC = appleAlbum.Attributes.Upc,
                 AppleMusicUrl = appleAlbum.Attributes.Url,
                 AlbumName = appleAlbum.Attributes.Name,
-                AritstNames = [appleAlbum.Attributes.Name],
+                AritstNames = [appleAlbum.Attributes.ArtistName],
             };
 
             // Spotify
