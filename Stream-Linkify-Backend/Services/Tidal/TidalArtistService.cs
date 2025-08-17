@@ -27,13 +27,14 @@ namespace Stream_Linkify_Backend.Services.Tidal
             {
                 "track" => TidalUrlHelper.ExtractTidalId(tidalUrl, "track"),
                 "album" => TidalUrlHelper.ExtractTidalId(tidalUrl, "album"),
+                "id" => tidalUrl.ToLowerInvariant(),
                 _ => throw new InvalidOperationException($"Invalid itemType for tidal.GetArtistNames: {itemType}")
             };
 
             var reqUrl = itemType switch
             {
-                "track" => $"{tidalApiUrl}/tracks/{id}/relationships/artists?countryCode=US&include=tracks",
-                "album" => $"{tidalApiUrl}/albums/{id}/relationships/artists?countryCode=US&include=albums",
+                "track" => $"{tidalApiUrl}/tracks/{id}/relationships/artists?include=artists&countryCode=US",
+                "album" => $"{tidalApiUrl}/albums/{id}/relationships/artists?include=artists&countryCode=US",
                 _ => throw new InvalidOperationException($"Invalid itemType for tidal.GetArtistNames: {itemType}")
             };
 

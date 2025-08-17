@@ -68,7 +68,7 @@ namespace Stream_Linkify_Backend.Services.Tidal
             };
 
             // Spotify
-            var(spotifyTrackUrl, spotifyAlbumName, spotifyArtistNames) = await musicServices.SpotifyTrack.GetByIsrcAsync(result.ISRC);
+            var(spotifyTrackUrl, spotifyAlbumName, spotifyArtistNames) = await musicServices.SpotifyTrack.GetByNameAsync(result.ISRC, result.SongName, result.AritstNames[0]);
             result.SpotifyUrl = spotifyTrackUrl;
             if (result.SpotifyUrl == null)
                 logger.LogWarning("Spotify URL not found for ISRC {ISRC}", result.ISRC);

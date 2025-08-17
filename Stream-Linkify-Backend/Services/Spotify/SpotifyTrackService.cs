@@ -17,7 +17,6 @@ namespace Stream_Linkify_Backend.Services.Spotify
             ILogger<SpotifyTrackService> logger
             )
         {
-
             this.spotifyApiClient = spotifyApiClient;
             this.logger = logger;
         }
@@ -32,29 +31,46 @@ namespace Stream_Linkify_Backend.Services.Spotify
             return result;
         }
 
-        public async Task<(string? url, string? albumName, List<string> artistNames)> GetByIsrcAsync(string isrc)
+        public async Task<(string? url, string? albumName, List<string> artistNames)> GetByNameAsync(string isrc, string trackName, string artistName)
         {
             var query = $"isrc:{isrc}";
             var reqUrl = $"{spotifyApiUrl}/search/?q={Uri.EscapeDataString(query)}&type=track%2Calbum";
 
             SpotifySearchResponseDto? result = await spotifyApiClient.SendSpotifyRequestAsync<SpotifySearchResponseDto>(reqUrl);
 
-            if (result == null)
+            if (result != null)
             {
-                logger.LogWarning("Could not get Spotify track for isrc '{isrc}'", isrc);
-                return (null, null, []);
+                var trackId = result.Tracks?.Items.FirstOrDefault()?.Id;
+                var url = $"https://open.spotify.com/track/{trackId}";
+
+                var albumName = result.Tracks?.Items?.FirstOrDefault()?.Album?.Name;
+
+                var artistNames = result.Tracks?.Items?.FirstOrDefault()?.Artists.Select(a => a.Name).ToList();
+                if (artistNames == null)
+                    return (url, albumName, []);
+
+                return (url, albumName, artistNames);
             }
 
-            var trackId = result.Tracks?.Items.FirstOrDefault()?.Id;
-            var url = $"https://open.spotify.com/track/{trackId}";
+            logger.LogWarning("Could not get Spotify track for isrc '{isrc}'", isrc);
 
-            var albumName = result.Tracks?.Items?.FirstOrDefault()?.Album?.Name;
+            return (null, null, []);
 
-            var artistNames = result.Tracks?.Items?.FirstOrDefault()?.Artists.Select(a => a.Name).ToList();
-            if (artistNames == null)
-                return (url, albumName, []);
+            //    query = $"{trackName}-{artistName}";
+            //    reqUrl = 
 
-            return (url, albumName, artistNames);
+
+
+            //    if (!string.IsNullOrWhiteSpace(trackId))
+            //        return (url, albumName, artistNames);
+
+
+
+
+
+
+
+            //    return (url, albumName, artistNames);
         }
     }
 }

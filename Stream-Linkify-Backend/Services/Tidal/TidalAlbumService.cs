@@ -19,7 +19,6 @@ namespace Stream_Linkify_Backend.Services.Tidal
             this.logger = logger;
         }
 
-        // TODO: IMPLEMENT THESE
         public async Task<TidalAlbumResponseDto?> GetByUrlAsync(string url)
         {
             var albumId = TidalUrlHelper.ExtractTidalId(url, "album");
