@@ -11,16 +11,13 @@
             if (uri.Host == "link.deezer.com")
             {
                 // This is a share link we need to convert to a standard deezer link
-                using var client = new HttpClient(new HttpClientHandler() { AllowAutoRedirect = false });
+                using var client = new HttpClient(new HttpClientHandler() { AllowAutoRedirect = true });
                 var resp = await client.SendAsync(new HttpRequestMessage(HttpMethod.Head, deezerUrl))
                     ?? throw new InvalidOperationException($"Unexpected response from Deezer: null");
 
-                if (resp.StatusCode == System.Net.HttpStatusCode.Found || 
-                    resp.StatusCode == System.Net.HttpStatusCode.Redirect)
+                if (resp.StatusCode == System.Net.HttpStatusCode.OK)
                 {
-                    var finalUrl = resp.Headers?.Location?.ToString();
-                    if (!Uri.TryCreate(finalUrl, UriKind.Absolute, out uri))
-                        throw new InvalidOperationException($"Unexpected response from Deezer: {resp.StatusCode}");
+                    uri = resp.RequestMessage?.RequestUri;
                 } 
                 else
                 {
@@ -28,11 +25,16 @@
                 }
             }
 
-            var pathParts = uri.AbsolutePath.Split('/', StringSplitOptions.RemoveEmptyEntries)
+            var pathParts = uri!.AbsolutePath.Split('/', StringSplitOptions.RemoveEmptyEntries)
                 .Select(p => p.ToLowerInvariant())
-                .ToArray(); 
-            // region, track/album, id
-            var id = pathParts[2];
+                .ToArray();
+
+            var id = pathParts.Length switch
+            {
+                3 => pathParts[2],
+                2 => pathParts[1],
+                _ => null
+            };
 
             if (!int.TryParse(id, out _))
                 throw new ArgumentException("Invalid Deezer URL, id should be number");

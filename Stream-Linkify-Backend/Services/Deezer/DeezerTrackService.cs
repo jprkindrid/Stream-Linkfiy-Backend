@@ -41,6 +41,7 @@ namespace Stream_Linkify_Backend.Services.Deezer
                 return null;
             }
 
+            // Deezer does not include ISRC in results to the 'search' endpoint of their api
             foreach(var track in result.Data)
             {
                 if (string.Equals(track.Title, trackName, StringComparison.OrdinalIgnoreCase) && 
