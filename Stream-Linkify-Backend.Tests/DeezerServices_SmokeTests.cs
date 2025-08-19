@@ -17,11 +17,9 @@ namespace Stream_Linkify_Backend.Tests
         {
             var services = new ServiceCollection();
 
-            // Logging & HTTP
             services.AddLogging(b => b.AddConsole());
             services.AddHttpClient();
 
-            // Core Deezer services
             services.AddSingleton<IDeezerApiClient, DeezerApiClient>();
             services.AddSingleton<IDeezerTrackService, DeezerTrackService>();
 
@@ -33,7 +31,6 @@ namespace Stream_Linkify_Backend.Tests
         {
             var trackService = _serviceProvider.GetRequiredService<IDeezerTrackService>();
 
-            // Example Deezer track (Daft Punk - Harder, Better, Faster, Stronger)
             var testUrl = "https://www.deezer.com/us/track/3135556";
 
             DeezerTrackFullDto? track = await trackService.GetByUrlAsync(testUrl);
@@ -42,6 +39,19 @@ namespace Stream_Linkify_Backend.Tests
             Assert.Equal("Harder, Better, Faster, Stronger", track!.Title);
             Assert.Equal("Daft Punk", track.Artist.Name);
             Assert.False(string.IsNullOrWhiteSpace(track.Isrc));
+        }
+        [Fact]
+        public async Task GetValidTrackByNameAsync_ReturnsTrack()
+        {
+            var trackService = _serviceProvider.GetRequiredService<IDeezerTrackService>();
+
+            var artist = "Kindrid";
+            var track = "No Pressure";
+
+            string? result = await trackService.GetByNameAsync(track, artist);
+
+            Assert.NotNull(result);
+            Assert.Equal("https://www.deezer.com/track/3326228661", result);
         }
     }
 }

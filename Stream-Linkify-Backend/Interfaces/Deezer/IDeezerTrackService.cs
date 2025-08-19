@@ -5,6 +5,6 @@ namespace Stream_Linkify_Backend.Interfaces.Deezer
     public interface IDeezerTrackService
     {
         Task<DeezerTrackFullDto?> GetByUrlAsync(string deezerUrl);
-        Task<string> GetByNameAsync(string trackName, string artistName);
+        Task<string?> GetByNameAsync(string trackName, string artistName);
     }
 }

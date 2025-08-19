@@ -13,11 +13,6 @@ namespace Stream_Linkify_Backend.Services.Deezer
         private readonly IDeezerApiClient deezerApiClient = deezerApiClient;
         private readonly ILogger<DeezerTrackService> logger = logger;
 
-        public Task<string> GetByNameAsync(string trackName, string artistName)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<DeezerTrackFullDto?> GetByUrlAsync(string deezerUrl)
         {
             var trackId = await DeezerUrlHelper.ExtractDeezerId(deezerUrl);
@@ -32,6 +27,30 @@ namespace Stream_Linkify_Backend.Services.Deezer
             }
 
             return result;
+        }
+        public async Task<string?> GetByNameAsync(string trackName, string artistName)
+        {
+            var query = $"{artistName} {trackName}";
+            var reqUrl = $"{deezerApiUrl}/search/track?q={Uri.EscapeDataString(query)}";
+
+            DeezerTrackSearchResponse? result = await deezerApiClient.SendDeezerRequestAsync<DeezerTrackSearchResponse>(reqUrl);
+
+            if (result == null || result.Data.Count == 0)
+            {
+                logger.LogWarning("Could not get response for Deezer request {url}", reqUrl);
+                return null;
+            }
+
+            foreach(var track in result.Data)
+            {
+                if (string.Equals(track.Title, trackName, StringComparison.OrdinalIgnoreCase) && 
+                    string.Equals(track.Artist.Name, artistName, StringComparison.OrdinalIgnoreCase))
+                    return track.Link;
+            }
+
+            logger.LogWarning("No result for Deezer track with name {trackName} and artist {artistname}", trackName, artistName);
+
+            return null;
         }
     }
 }
