@@ -6,18 +6,12 @@ using Stream_Linkify_Backend.Interfaces.Tidal;
 
 namespace Stream_Linkify_Backend.Services.Apple
 {
-    public class AppleTrackService : IAppleTrackService
+    public class AppleTrackService(IAppleApiClient appleApiClient,
+        ILogger<AppleTrackService> logger) : IAppleTrackService
     {
         private const string appleMusicApiUrl = "https://api.music.apple.com/v1";
-        private readonly IAppleApiClient appleApiClient;
-        private readonly ILogger<AppleTrackService> logger;
-
-        public AppleTrackService(IAppleApiClient appleApiClient,
-            ILogger<AppleTrackService> logger)
-        {
-            this.appleApiClient = appleApiClient;
-            this.logger = logger;
-        }
+        private readonly IAppleApiClient appleApiClient = appleApiClient;
+        private readonly ILogger<AppleTrackService> logger = logger;
 
         public async Task<AppleSongDataDto?> GetTrackByUrlAsync(string url)
         {

@@ -2,22 +2,16 @@
 
 namespace Stream_Linkify_Backend.Services.Spotify
 {
-    public class SpotifyApiClient : ISpotifyApiClient
+    public class SpotifyApiClient(
+        IHttpClientFactory httpClientFactory,
+        ILogger<SpotifyApiClient> logger,
+        ISpotifyTokenService spotifyTokenService) : ISpotifyApiClient
     {
-        private readonly IHttpClientFactory httpClientFactory;
-        private readonly ILogger<SpotifyApiClient> logger;
-        private readonly ISpotifyTokenService spotifyTokenService;
+        private readonly IHttpClientFactory httpClientFactory = httpClientFactory;
+        private readonly ILogger<SpotifyApiClient> logger = logger;
+        private readonly ISpotifyTokenService spotifyTokenService = spotifyTokenService;
         private readonly SemaphoreSlim sem = new(10, 10);
 
-        public SpotifyApiClient(
-            IHttpClientFactory httpClientFactory,
-            ILogger<SpotifyApiClient> logger,
-            ISpotifyTokenService spotifyTokenService)
-        {
-            this.httpClientFactory = httpClientFactory;
-            this.logger = logger;
-            this.spotifyTokenService = spotifyTokenService;
-        }
         public async Task<T?> SendSpotifyRequestAsync<T>(string reqUrl)
         {
             await sem.WaitAsync();

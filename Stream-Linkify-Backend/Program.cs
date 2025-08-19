@@ -26,6 +26,7 @@ builder.Services.AddHttpClient();
 builder.Services.AddSpotifyServices();
 builder.Services.AddAppleServices();
 builder.Services.AddTidalServices();
+builder.Services.AddDeezerServices();
 
 var app = builder.Build();
 

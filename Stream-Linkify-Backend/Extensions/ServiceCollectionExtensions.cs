@@ -1,8 +1,10 @@
 ﻿using Stream_Linkify_Backend.Helpers;
 using Stream_Linkify_Backend.Interfaces.Apple;
+using Stream_Linkify_Backend.Interfaces.Deezer;
 using Stream_Linkify_Backend.Interfaces.Spotify;
 using Stream_Linkify_Backend.Interfaces.Tidal;
 using Stream_Linkify_Backend.Services.Apple;
+using Stream_Linkify_Backend.Services.Deezer;
 using Stream_Linkify_Backend.Services.Spotify;
 using Stream_Linkify_Backend.Services.Tidal;
 
@@ -32,16 +34,23 @@ namespace Stream_Linkify_Backend.Extensions
             return services;
         }
 
-        public static IServiceCollection AddTidalServices(this IServiceCollection serivces)
+        public static IServiceCollection AddTidalServices(this IServiceCollection services)
         {
-            serivces.AddSingleton<ITidalApiClient, TidalApiClient>();
-            serivces.AddSingleton<ITidalTokenService, TidalTokenService>();
-            serivces.AddScoped<ITidalArtistService, TidalArtistService>();
-            serivces.AddScoped<ITidalTrackService, TidalTrackService>();
-            serivces.AddScoped<ITidalAlbumService, TidalAlbumService>();
-            serivces.AddScoped<ITidalInput, TidalInput>();
+            services.AddSingleton<ITidalApiClient, TidalApiClient>();
+            services.AddSingleton<ITidalTokenService, TidalTokenService>();
+            services.AddScoped<ITidalArtistService, TidalArtistService>();
+            services.AddScoped<ITidalTrackService, TidalTrackService>();
+            services.AddScoped<ITidalAlbumService, TidalAlbumService>();
+            services.AddScoped<ITidalInput, TidalInput>();
 
-            return serivces;
+            return services;
+        }
+        public static IServiceCollection AddDeezerServices(this IServiceCollection services)
+        {
+            services.AddSingleton<IDeezerApiClient, DeezerApiClient>();
+            services.AddSingleton<IDeezerTrackService, DeezerTrackService>();
+
+            return services;
         }
     }
 }
