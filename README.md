@@ -25,7 +25,7 @@ Client -> POST /api/UrlConversion/tracks (track URL)
 							├─> Queries other providers by ISRC (or fallback search (by track name and primary artist))
 							└─> Aggregates TrackReturnDto (original + alt URLs)
 
-		-> POST /api/UrlConversion/albums (track URL)
+		-> POST /api/UrlConversion/albums (album URL)
 				└─> Provider Input (Spotify, AppleMusic, etc.) parses + fetches base album attributes
 							├─> Resolves UPC & core metadata
 							├─> Queries other providers by UPC (or fallback search (by album name and primary artist))
