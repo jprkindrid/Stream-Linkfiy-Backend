@@ -2,7 +2,7 @@
 
 # Stream‑Linkify Backend (WIP)
 
-Convert a track URL from one streaming provider (Spotify / Apple Music / TIDAL currently) into equivalent track links (and metadata) on the other supported platforms.
+Convert a track URL from one streaming provider (Spotify / Apple Music / TIDAL / Deezer currently) into equivalent track links (and metadata) on the other supported platforms.
 
 </div>
 
@@ -20,10 +20,16 @@ Convert a track URL from one streaming provider (Spotify / Apple Music / TIDAL c
 
 ```
 Client -> POST /api/UrlConversion/tracks (track URL)
-				└─> Provider Input (Spotify / Apple / Tidal) parses + fetches base track
+				└─> Provider Input (Spotify, AppleMusic, etc.) parses + fetches base track attributes
 							├─> Resolves ISRC & core metadata
-							├─> Queries other providers by ISRC (or fallback search)
+							├─> Queries other providers by ISRC (or fallback search (by track name and primary artist))
 							└─> Aggregates TrackReturnDto (original + alt URLs)
+
+		-> POST /api/UrlConversion/albums (album URL)
+				└─> Provider Input (Spotify, AppleMusic, etc.) parses + fetches base album attributes
+							├─> Resolves UPC & core metadata
+							├─> Queries other providers by UPC (or fallback search (by album name and primary artist))
+							└─> Aggregates AlbumReturnDto (original + alt URLs)
 ```
 
 Key layers:
@@ -38,7 +44,7 @@ Key layers:
 |--------|-------|-------------|-------|
 | GET | `/` | Simple health/info | Returns basic message. |
 | POST | `/api/UrlConversion/tracks` | Convert a provider track URL into cross‑platform links | Body: `{ "trackUrl": "..." }` |
-| POST | `/api/UrlConversion/albums` | **(WIP)** Convert a provider ALBUM URL into cross‑platform links | Body: `{ "albumUrl": "..." }` |
+| POST | `/api/UrlConversion/albums` | Convert a provider ALBUM URL into cross‑platform links | Body: `{ "albumUrl": "..." }` |
 
 OpenAPI / Scalar UI available in Development: visit `/scalar` (it internally maps the OpenAPI doc produced by `builder.Services.AddOpenApi()` + `app.MapOpenApi()`).
 
@@ -63,6 +69,7 @@ Tracks:
     "spotify": "https://open.spotify.com/track/...",
 	"apple": "https://music.apple.com/us/album/.../track/...",
 	"tidal": "https://listen.tidal.com/track/..."
+	"deezer": "https://www.deezer.com/track/..."
 }
 ```
 
@@ -138,13 +145,14 @@ Optionally add to your profile for persistence.
 
 ## 🧪 Smoke Tests Overview
 Located in `Stream-Linkify-Backend.Tests`:
-- `AppleTokenGenerator_SmokeTests` – validates Apple Music developer token generation + basic track lookups (requires secrets & a test track URL / ISRC).
-- `SpotifyTokenService_SmokeTests` – validates token acquisition and sample track / album retrieval.
-- `TidalTokenService_SmokeTests` – validates TIDAL token flow (credentials TBD via user secrets).
+- `AppleServices_SmokeTests` - validates Apple Music developer token generation + basic track lookups (requires secrets & a test track URL / ISRC).
+- `SpotifyServices_SmokeTests` - validates token acquisition and sample track / album retrieval.
+- `TidalServices_SmokeTests` - validates token acquisition and sample track / album retrieval.
+- `DeezerService_SmokeTests` - validates ample track/akbum retrieval as well as conversion of 'share' links.
 
 ## 📦 Docker (Initial Skeleton)
 
-There is a `Dockerfile` present. Typical build (ensure secrets provided via build args or runtime env vars – never bake secrets into layers):
+There is a `Dockerfile` present. Typical build (ensure secrets provided via build args or runtime env vars - never bake secrets into layers):
 ```pwsh
 docker build -t stream-linkify-backend .
 docker run -p 8080:8080 -e ASPNETCORE_ENVIRONMENT=Development stream-linkify-backend
@@ -157,7 +165,7 @@ Inject runtime secrets using `-e` flags or a Docker secret management solution.
 - Replace ad-hoc provider parsing with a pluggable strategy registry.
 - Add caching (e.g., MemoryCache / Redis) for tokens + track metadata.
 - Add database for existing searched tracks, call tracks from db first.
-- Additional providers (YouTube Music, Deezer, SoundCloud – contingent on API feasibility).
+- Additional providers (YouTube Music, Deezer, SoundCloud - contingent on API feasibility).
 - OpenTelemetry instrumentation (traces / metrics) + structured logging enrichment.
 - Rate limiting / resiliency policies (Polly) around provider calls.
 - CI workflow (build, test, security scan) + container publish.
