@@ -1,4 +1,5 @@
 ﻿using Stream_Linkify_Backend.Interfaces.Apple;
+using Stream_Linkify_Backend.Interfaces.Deezer;
 using Stream_Linkify_Backend.Interfaces.Spotify;
 using Stream_Linkify_Backend.Interfaces.Tidal;
 
@@ -17,5 +18,9 @@ namespace Stream_Linkify_Backend.Interfaces
         // TIDAL
         ITidalTrackService TidalTrack { get; }
         ITidalAlbumService TidalAlbum { get; }
+
+        // Deezer
+        IDeezerAlbumService DeezerAlbum { get; }
+        IDeezerTrackService DeezerTrack { get; }
     }
 }

@@ -12,17 +12,17 @@ using Xunit;
 
 namespace Stream_Linkify_Backend.Tests
 {
-    public class AppleService_SmokeTests
+    public class AppleServices_SmokeTests
     {
         private readonly IConfiguration _config;
         private readonly ServiceProvider _serviceProvider;
 
-        public AppleService_SmokeTests()
+        public AppleServices_SmokeTests()
         {
             var services = new ServiceCollection();
 
             _config = new ConfigurationBuilder()
-                .AddUserSecrets<AppleService_SmokeTests>() // Make sure secrets contain AppleMusicKit keys
+                .AddUserSecrets<AppleServices_SmokeTests>() // Make sure secrets contain AppleMusicKit keys
                 .Build();
 
             services.AddSingleton<IConfiguration>(_config);

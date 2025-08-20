@@ -1,5 +1,6 @@
 ﻿using Stream_Linkify_Backend.Interfaces;
 using Stream_Linkify_Backend.Interfaces.Apple;
+using Stream_Linkify_Backend.Interfaces.Deezer;
 using Stream_Linkify_Backend.Interfaces.Spotify;
 using Stream_Linkify_Backend.Interfaces.Tidal;
 
@@ -11,7 +12,9 @@ namespace Stream_Linkify_Backend.Services
         IAppleTrackService appleTrack,
         IAppleAlbumService appleAlbum,
         ITidalTrackService tidalTrack,
-        ITidalAlbumService tidalAlbum
+        ITidalAlbumService tidalAlbum,
+        IDeezerTrackService deezerTrack,
+        IDeezerAlbumService deezerAlbum
             ) : IMusicServiceFactory
     {
         public ISpotifyTrackService SpotifyTrack { get; } = spotifyTrack;
@@ -20,5 +23,7 @@ namespace Stream_Linkify_Backend.Services
         public IAppleAlbumService AppleAlbum { get; } = appleAlbum;
         public ITidalTrackService TidalTrack { get; } = tidalTrack;
         public ITidalAlbumService TidalAlbum { get; } = tidalAlbum;
+        public IDeezerTrackService DeezerTrack { get; } = deezerTrack;
+        public IDeezerAlbumService DeezerAlbum { get; } = deezerAlbum;
     }
 }

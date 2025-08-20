@@ -46,13 +46,13 @@ namespace Stream_Linkify_Backend.Tests
         {
             var trackService = _serviceProvider.GetRequiredService<IDeezerTrackService>();
 
-            var testUrl = "https://link.deezer.com/s/30O2V0mKoilmoOZydz5IY";
+            var testUrl = "https://link.deezer.com/s/30OAMLlLdVPqaibF4Rj8B";
 
             DeezerTrackFullDto? track = await trackService.GetByUrlAsync(testUrl);
 
             Assert.NotNull(track);
-            Assert.Equal("Harder, Better, Faster, Stronger", track!.Title);
-            Assert.Equal("Daft Punk", track.Artist.Name);
+            Assert.Equal("Door City", track!.Title);
+            Assert.Equal("Kindrid", track.Artist.Name);
             Assert.False(string.IsNullOrWhiteSpace(track.Isrc));
         }
         [Fact]

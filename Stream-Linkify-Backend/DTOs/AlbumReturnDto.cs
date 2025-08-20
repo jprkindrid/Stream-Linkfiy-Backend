@@ -7,5 +7,6 @@
         public string? Spotify { get; set; }
         public string? AppleMusic { get; set; }
         public string? Tidal { get; set; }
+        public string? Deezer { get; set; }
     }
 }

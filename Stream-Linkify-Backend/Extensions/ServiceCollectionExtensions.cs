@@ -48,8 +48,9 @@ namespace Stream_Linkify_Backend.Extensions
         public static IServiceCollection AddDeezerServices(this IServiceCollection services)
         {
             services.AddSingleton<IDeezerApiClient, DeezerApiClient>();
-            services.AddSingleton<IDeezerTrackService, DeezerTrackService>();
-            services.AddSingleton<IDeezerAlbumService, DeezerAlbumService>();
+            services.AddScoped<IDeezerTrackService, DeezerTrackService>();
+            services.AddScoped<IDeezerAlbumService, DeezerAlbumService>();
+            services.AddScoped<IDeezerInput, DeezerInput>();
 
             return services;
         }

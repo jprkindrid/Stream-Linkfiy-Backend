@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Stream_Linkify_Backend.DTOs;
 using Stream_Linkify_Backend.Interfaces.Apple;
+using Stream_Linkify_Backend.Interfaces.Deezer;
 using Stream_Linkify_Backend.Interfaces.Spotify;
 using Stream_Linkify_Backend.Interfaces.Tidal;
 using Stream_Linkify_Backend.Models;
@@ -9,25 +10,19 @@ namespace Stream_Linkify_Backend.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class UrlConversionController : ControllerBase
+    public class UrlConversionController(
+        ILogger<UrlConversionController> logger,
+        ISpotifyInput spotifyInput,
+        IAppleInput appleInput,
+        ITidalInput tidalInput,
+        IDeezerInput deezerInput
+            ) : ControllerBase
     {
-        private readonly ILogger<UrlConversionController> logger;
-        private readonly ISpotifyInput spotifyInput;
-        private readonly IAppleInput appleInput;
-        private readonly ITidalInput tidalInput;
-
-        public UrlConversionController(
-            ILogger<UrlConversionController> logger,
-            ISpotifyInput spotifyInput,
-            IAppleInput appleInput,
-            ITidalInput tidalInput
-            )
-        {
-            this.logger = logger;
-            this.spotifyInput = spotifyInput;
-            this.appleInput = appleInput;
-            this.tidalInput = tidalInput;
-        }
+        private readonly ILogger<UrlConversionController> logger = logger;
+        private readonly ISpotifyInput spotifyInput = spotifyInput;
+        private readonly IAppleInput appleInput = appleInput;
+        private readonly ITidalInput tidalInput = tidalInput;
+        private readonly IDeezerInput deezerInput = deezerInput;
 
         [HttpPost("tracks")]
         public async Task<IActionResult> ConvertToAllTrackUrls([FromBody] TrackUrlRequestDto request)
@@ -42,6 +37,7 @@ namespace Stream_Linkify_Backend.Controllers
                     "open.spotify.com" => await spotifyInput.GetTrackUrlsAsync(request.TrackUrl),
                     "music.apple.com" => await appleInput.GetTrackUrlsAsync(request.TrackUrl),
                     "listen.tidal.com" or "tidal.com" => await tidalInput.GetTrackUrlsAsync(request.TrackUrl),
+                    "www.deezer.com" or "link.deezer.com" => await deezerInput.GetTrackUrlsAsync(request.TrackUrl),
                     _ => null
                 };
 
@@ -74,6 +70,7 @@ namespace Stream_Linkify_Backend.Controllers
                     "open.spotify.com" => await spotifyInput.GetAlbumUrlsAsync(request.AlbumUrl),
                     "music.apple.com" => await appleInput.GetAlbumUrlsAsync(request.AlbumUrl),
                     "listen.tidal.com" or "tidal.com" => await tidalInput.GetAlbumUrlsAsync(request.AlbumUrl),
+                    "www.deezer.com" or "link.deezer.com" => await deezerInput.GetAlbumUrlsAsync(request.AlbumUrl),
                     _ => null
                 };
 

@@ -10,11 +10,11 @@ using Xunit;
 
 namespace Stream_Linkify_Backend.Tests
 {
-    public class TidalService_SmokeTests
+    public class TidalServices_SmokeTests
     {
         private readonly ServiceProvider _serviceProvider;
 
-        public TidalService_SmokeTests()
+        public TidalServices_SmokeTests()
         {
             var services = new ServiceCollection();
 
@@ -24,7 +24,7 @@ namespace Stream_Linkify_Backend.Tests
 
             // Config from user-secrets + env vars
             var config = new ConfigurationBuilder()
-                .AddUserSecrets<TidalService_SmokeTests>(optional: true)
+                .AddUserSecrets<TidalServices_SmokeTests>(optional: true)
                 .AddEnvironmentVariables()
                 .Build();
 
@@ -35,6 +35,7 @@ namespace Stream_Linkify_Backend.Tests
             services.AddSingleton<ITidalApiClient, TidalApiClient>();
             services.AddSingleton<ITidalTrackService, TidalTrackService>();
             services.AddSingleton<ITidalAlbumService, TidalAlbumService>();
+            services.AddSingleton<ITidalArtistService, TidalArtistService>();
 
             _serviceProvider = services.BuildServiceProvider();
         }
@@ -97,7 +98,7 @@ namespace Stream_Linkify_Backend.Tests
             var albumService = _serviceProvider.GetRequiredService<ITidalAlbumService>();
 
             // Example TIDAL album URL
-            var exampleAlbum = "https://tidal.com/browse/album/445978727";
+            var exampleAlbum = "https://tidal.com/album/445978727";
 
             TidalAlbumResponseDto? album = await albumService.GetByUrlAsync(exampleAlbum);
 
@@ -112,7 +113,7 @@ namespace Stream_Linkify_Backend.Tests
         {
             var albumService = _serviceProvider.GetRequiredService<ITidalAlbumService>();
 
-            var testAlbumLink = "https://tidal.com/browse/album/430298609";
+            var testAlbumLink = "https://tidal.com/album/430298609";
             var testArtist = "Kindrid";
             var testAlbumName = "Inertia of Solitude";
             var testUpc = "199257088807";

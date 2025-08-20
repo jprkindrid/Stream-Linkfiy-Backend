@@ -47,7 +47,7 @@ namespace Stream_Linkify_Backend.Services.Tidal
             if (browseUrl != null)
             {
                 var albumId = TidalUrlHelper.ExtractTidalId(browseUrl, "album");
-                return $"https://listen.tidal.com/album/{albumId}";
+                return $"https://tidal.com/album/{albumId}";
             }
 
             logger.LogWarning("Unable to get TIDAL album with upc '{upc}'", upc);
@@ -64,7 +64,7 @@ namespace Stream_Linkify_Backend.Services.Tidal
                 return null;
             }
 
-            return $"https://listen.tidal.com/album/{firstAlbum.Id}";
+            return $"https://tidal.com/album/{firstAlbum.Id}";
         }
     }
 }

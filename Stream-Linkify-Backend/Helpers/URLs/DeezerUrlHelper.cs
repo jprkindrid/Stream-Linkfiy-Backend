@@ -36,7 +36,7 @@
                 _ => null
             };
 
-            if (!int.TryParse(id, out _))
+            if (!long.TryParse(id, out _))
                 throw new ArgumentException("Invalid Deezer URL, id should be number");
 
             return id;

@@ -61,7 +61,7 @@ namespace Stream_Linkify_Backend.Services.Tidal
                 logger.LogWarning("No TIDAL search results for track {trackName} with artist {artistName}", trackName, artistName);
                 return null;
             }
-
+            // TODO: standardize tidal links
             return $"https://listen.tidal.com/track/{firstTrack.Id}";;
         }
     }

@@ -38,6 +38,12 @@ namespace Stream_Linkify_Backend.Services.Spotify
             if (result.TidalUrl == null)
                 logger.LogWarning("TIDAL URL not found for UPC {UPC}", result.UPC);
 
+            // Deezer
+            result.DeezerUrl = await musicServices.DeezerAlbum.GetByNameAsync(result.AlbumName, result.AritstNames.First());
+            if (result.DeezerUrl == null)
+                logger.LogWarning("Deeer URL not found for album {albumName} and primary artist {artistName}", result.AlbumName, result.AritstNames.First());
+
+
             return result.ToAlbumReturnDto();
         }
 
@@ -57,16 +63,20 @@ namespace Stream_Linkify_Backend.Services.Spotify
                 AlbumName = spotifyTrack.Album.Name
             };
 
-            // Get AppleMusic url by ISRC
+            // AppleMusic
             result.AppleMusicUrl = await musicServices.AppleTrack.GetTrackUrlByNameAsync(result.ISRC!, result.SongName, result.AritstNames[0]);
             if (result.AppleMusicUrl == null)
                 logger.LogWarning("Apple Music URL not found for ISRC {ISRC}", result.ISRC);
 
-
-            // Get Tidal url from artist, track title, isrc
+            // TIDAL
             result.TidalUrl = await musicServices.TidalTrack.GetTrackUrlByNameAsync(result.SongName, result.AritstNames.FirstOrDefault()!, result.ISRC!);
             if (result.TidalUrl == null)
                 logger.LogWarning("TIDAL URL not found for ISRC {ISRC}", result.ISRC);
+
+            // Deezer
+            result.DeezerUrl = await musicServices.DeezerTrack.GetByNameAsync(result.SongName, result.AritstNames.First());
+            if (result.DeezerUrl == null)
+                logger.LogWarning("Deeer URL not found for track {trackName} and primary artist {artistName}", result.SongName, result.AritstNames.First());
 
             return result.ToTrackReturnDto();
         }

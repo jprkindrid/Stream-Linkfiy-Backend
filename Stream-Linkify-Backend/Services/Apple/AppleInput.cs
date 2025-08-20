@@ -43,6 +43,11 @@ namespace Stream_Linkify_Backend.Services.Apple
             if (result.TidalUrl == null)
                 logger.LogWarning("TIDAL URl not found for UPC {UPC}", result.UPC);
 
+            // Deezer
+            result.DeezerUrl = await musicServices.DeezerAlbum.GetByNameAsync(result.AlbumName, result.AritstNames.First());
+            if (result.DeezerUrl == null)
+                logger.LogWarning("Deeer URL not found for album {albumName} and primary artist {artistName}", result.AlbumName, result.AritstNames.First());
+
             return result.ToAlbumReturnDto();
         }
 
@@ -76,6 +81,12 @@ namespace Stream_Linkify_Backend.Services.Apple
             result.TidalUrl = await musicServices.TidalTrack.GetTrackUrlByNameAsync(result.SongName, result.AritstNames.First(), result.ISRC);
             if (result.TidalUrl == null)
                 logger.LogWarning("TIDAL URL not found for ISRC {ISRC}", result.ISRC);
+
+            // Deezer
+            result.DeezerUrl = await musicServices.DeezerTrack.GetByNameAsync(result.SongName, result.AritstNames.First());
+            if (result.DeezerUrl == null)
+                logger.LogWarning("Deeer URL not found for track {trackName} and primary artist {artistName}", result.SongName, result.AritstNames.First());
+            
 
             return result.ToTrackReturnDto();
         }

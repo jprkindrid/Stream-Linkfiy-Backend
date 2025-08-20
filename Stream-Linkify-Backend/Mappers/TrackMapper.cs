@@ -14,7 +14,8 @@ namespace Stream_Linkify_Backend.Mappers
                 AlbumName = track.AlbumName,
                 Spotify = track.SpotifyUrl,
                 AppleMusic = track.AppleMusicUrl,
-                Tidal = track.TidalUrl
+                Tidal = track.TidalUrl,
+                Deezer = track.DeezerUrl
             };
         }
     }
